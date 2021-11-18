@@ -4,10 +4,7 @@ import asyncio
 import json
 import logging
 import os
-<<<<<<< HEAD
-=======
 import requests
->>>>>>> upstream/main
 import websockets
 
 import pygame

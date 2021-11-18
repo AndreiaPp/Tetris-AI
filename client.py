@@ -5,6 +5,7 @@ import os
 
 import websockets
 
+import agent
 # Next 4 lines are not needed for AI agents, please remove them from your code!
 import pygame
 
@@ -23,16 +24,20 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
         SCREEN = pygame.display.set_mode((299, 123))
         SPRITES = pygame.image.load("data/pad.png").convert_alpha()
         SCREEN.blit(SPRITES, (0, 0))
-
+        c=0
+        x,y=0,0
         while True:
             try:
                 state = json.loads(
+                    
                     await websocket.recv()
                 )  # receive game update, this must be called timely or your game will get out of sync with the server
-
+                c+=1
+                if(c==1):
+                    x,y=state.get('dimensions')
                 # Next lines are only for the Human Agent, the key values are nonetheless the correct ones!
                 key = ""
-                for event in pygame.event.get():
+                for event in list(pygame.event.get())+agent.run_ai(state.get('game'),state.get('piece'),x,y):
                     if event.type == pygame.QUIT:
                         pygame.quit()
 
