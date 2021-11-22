@@ -33,7 +33,7 @@ original_pieces={
 	"T":[[4,3],[4,4],[5,4],[4,5]]
 }
 rotacoes = {
-    "S": [[[4,2],[4,3],[5,3],[5,4]], [[4,3],[5,3],[3,4],[4,4]]],
+    "S": [[[4,3],[4,4],[5,4],[5,5]], [[4,4],[5,4],[3,5],[4,5]]],
     "Z": [[[4,2],[3,3],[4,3],[3,4]], [[3,3],[4,3],[4,4],[5,4]]],
     "I": [[[2,2],[3,2],[4,2],[5,2]], [[4,1],[4,2],[4,3],[4,4]]],
     "O": [[[3,3],[4,3],[3,4],[4,4]]],
@@ -74,15 +74,15 @@ counter=0
 # 		return [e]
 # 	return []
 
-
+piece_name=""
 def run_ai(game,piece,x,y):
 	if piece:
 		global counter
+		global piece_name
 		counter +=1
 		if counter<3:
 			return []
 		counter = 0
-		piece_name=""
 		print(piece)
 		for p in original_pieces:
 			if(original_pieces[p]==piece):
@@ -139,6 +139,7 @@ def simulate(piece,i,j,game,width,height):
 		newheight=height
 		holes=0
 		filled=[]
+		
 		for x in range(height-1,-1,-1):
 			for y in range(width):
 				occupied=False
@@ -153,6 +154,7 @@ def simulate(piece,i,j,game,width,height):
 						if(k,y) not in filled:
 							holes+=1
 							filled.append((k,y))
+		print("---"+str(holes)+"--"+str(height-newheight))
 		return holes,height-newheight
 
 # def best(game,piece,width,height):
@@ -174,14 +176,18 @@ def best(game,piece_name,width,height):
 	
 	num_rotacoes = 0
 	for r in rotacoes[piece_name]:
+		print(r)
 		for i in range(-width,width): #percorrer o campo todo mas nao sei como
+			
 			if not intersect(r,i,0,game,width,height): #r é a peça rodada
 				simholes,simheight = simulate(r,i,0,game,width,height)
-				if best_position is None or best_holes>simholes or best_holes==simholes and best_height>simheight:
+				if best_position is None or best_holes>simholes or (best_holes==simholes and best_height>simheight):
 					best_height=simheight
 					best_holes=simholes
 					best_position=i
 					best_rotation=num_rotacoes
-
+					
 		num_rotacoes+=1
+	print(num_rotacoes)
+	print(best_rotation)
 	return best_position,best_rotation
