@@ -21,11 +21,10 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
         await websocket.send(json.dumps({"cmd": "join", "name": agent_name}))
 
         # Next 3 lines are not needed for AI agent
-        SCREEN = pygame.display.set_mode((299, 123))
-        SPRITES = pygame.image.load("data/pad.png").convert_alpha()
-        SCREEN.blit(SPRITES, (0, 0))
+        
         c=0
         x,y=0,0
+        actions=[]
         while True:
             try:
                 state = json.loads(
@@ -37,10 +36,14 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                     x,y=state.get('dimensions')
                 # Next lines are only for the Human Agent, the key values are nonetheless the correct ones!
                 key = ""
-                for event in list(pygame.event.get())+agent.run_ai(state.get('game'),state.get('piece'),x,y):
+                if(actions==[]):
+                    actions=agent.run_ai(state.get('game'),state.get('piece'),x,y)
+                    print (actions)
+                else:
+                    event=actions.pop(0)
                     if event.type == pygame.QUIT:
                         pygame.quit()
-
+                    print("evento"+str(event))
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_UP:
                             key = "w"
@@ -59,13 +62,11 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                         await websocket.send(
                             json.dumps({"cmd": "key", "key": key})
                         )  # send key command to server - you must implement this send in the AI agent
-                        break
+                        #break
             except websockets.exceptions.ConnectionClosedOK:
                 print("Server has cleanly disconnected us")
                 return
 
-            # Next line is not needed for AI agent
-            pygame.display.flip()
 
 
 # DO NOT CHANGE THE LINES BELLOW

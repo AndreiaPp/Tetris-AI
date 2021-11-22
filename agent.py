@@ -17,13 +17,20 @@ class Event():
 # 	"T":[[1,1],[1,2],[2,2],[1,3]]
 # 	}	
 original_pieces={
-	"S":[[4,2],[4,3],[5,3],[5,4]],
-	"Z":[[4,2],[3,3],[4,3],[3,4]],
-	"I":[[2,2],[3,2],[4,2],[5,2]],
-	"O":[[3,3],[4,3],[3,4],[4,4]],
-	"J":[[4,2],[5,2],[4,3],[4,4]],
-	"L":[[4,2],[4,3],[4,4],[5,4]],
-	"T":[[4,2],[4,3],[5,3],[4,4]]
+	# "S":[[4,2],[4,3],[5,3],[5,4]],
+	"S":[[4,3],[4,4],[5,4],[5,5]],
+	# "Z":[[4,2],[3,3],[4,3],[3,4]],
+	"Z":[[4,3],[3,4],[4,4],[3,5]],
+	# "I":[[2,2],[3,2],[4,2],[5,2]],
+	"I":[[2,3],[3,3],[4,3],[5,3]],
+	# "O":[[3,3],[4,3],[3,4],[4,4]],
+	"O":[[3,4],[4,4],[3,5],[4,5]],
+	#"J":[[4,2],[5,2],[4,3],[4,4]],
+	"J":[[4,3],[5,3],[4,4],[4,5]],
+	# "L":[[4,2],[4,3],[4,4],[5,4]],
+	"L":[[4,3],[4,4],[4,5],[5,5]],
+	# "T":[[4,2],[4,3],[5,3],[4,4]]
+	"T":[[4,3],[4,4],[5,4],[4,5]]
 }
 rotacoes = {
     "S": [[[4,2],[4,3],[5,3],[5,4]], [[4,3],[5,3],[3,4],[4,4]]],
@@ -35,36 +42,67 @@ rotacoes = {
     "T": [[[4,2],[4,3],[5,3],[4,4]], [[3,3],[4,3],[5,3],[4,4]], [[4,2],[3,3],[4,3],[4,4]], [[4,2],[3,3],[4,3],[5,3]]]
 }
 counter=0
+# def run_ai(game,piece,x,y):
+# 	if piece:
+# 		global counter
+# 		#original_pieces[identify_piece(piece)]
+# 		#c=shape(identify_piece(piece))
+# 		#for i in c:
+# 		#		print(i.plan)
+# 		piece_name=""
+# 		for p in original_pieces:
+# 			if(original_pieces[p]==piece):
+				
+# 				piece_name=p
+# 				print("Sou o "+ piece_name)
+# 		num_rotacoes=0
+# 		for i in rotacoes[piece_name]:
+# 			#simular com esta rotação
+# 			num_rotacoes+=1
+# 		counter +=1
+# 		if counter<3:
+# 			return []
+# 		counter = 0
+		
+# 		if not intersect(piece,-1,0,game,x,y):
+# 			e= Event(pygame.KEYDOWN,pygame.K_LEFT)
+# 		elif not intersect(piece,1,0,game,x,y):
+# 			e= Event(pygame.KEYDOWN,pygame.K_RIGHT)
+# 		else:
+# 			e= Event(pygame.KEYDOWN,pygame.K_DOWN)
+
+# 		return [e]
+# 	return []
+
+
 def run_ai(game,piece,x,y):
 	if piece:
 		global counter
-		#original_pieces[identify_piece(piece)]
-		#c=shape(identify_piece(piece))
-		#for i in c:
-		#		print(i.plan)
-		piece_name=""
-		for p in original_pieces:
-			if(original_pieces[p]==piece):
-				
-				piece_name=p
-				print("Sou o "+ piece_name)
-		num_rotacoes=0
-		for i in rotacoes[piece_name]:
-			#simular com esta rotação
-			num_rotacoes+=1
 		counter +=1
 		if counter<3:
 			return []
 		counter = 0
+		piece_name=""
+		print(piece)
+		for p in original_pieces:
+			if(original_pieces[p]==piece):
+				piece_name=p
+				print("Sou o "+ piece_name)
+		position,rotation =best(game,piece_name,10,30) 
+		#TO DO:mudar medidas para deixar de estarem hardcoded
+		print(position,rotation)
+		ret=[] #retornar logo os comandos todos
+		for i in range(rotation):
+			ret.append(Event(pygame.KEYDOWN, pygame.K_UP))
+		while position<0: #nao sei como traduzir o game_figure.x
+			ret.append(Event(pygame.KEYDOWN, pygame.K_RIGHT)) 
+			position+=1
+		while position>0:
+			ret.append(Event(pygame.KEYDOWN, pygame.K_RIGHT)) 
+			position-=1
+		ret.append(Event(pygame.KEYDOWN, pygame.K_SPACE))
 		
-		if not intersect(piece,-1,0,game,x,y):
-			e= Event(pygame.KEYDOWN,pygame.K_LEFT)
-		elif not intersect(piece,1,0,game,x,y):
-			e= Event(pygame.KEYDOWN,pygame.K_RIGHT)
-		else:
-			e= Event(pygame.KEYDOWN,pygame.K_DOWN)
-
-		return [e]
+		return ret
 	return []
 	
 def identify_piece(piece):
@@ -117,13 +155,33 @@ def simulate(piece,i,j,game,width,height):
 							filled.append((k,y))
 		return holes,height-newheight
 
-def best(game,piece,width,height):
+# def best(game,piece,width,height):
+# 	best_height=height
+# 	best_holes=width*height
+# 	best_position=None
+# 	best_rot=None
+	
+# 	for rot in range(4): #rodamos 4 vezes
+# 		#como rodar??
+# 		pass
+
+
+def best(game,piece_name,width,height):
 	best_height=height
 	best_holes=width*height
 	best_position=None
-	best_rot=None
+	best_rotation=None
 	
-	for rot in range(4): #rodamos 4 vezes
-		#como rodar??
-		pass
+	num_rotacoes = 0
+	for r in rotacoes[piece_name]:
+		for i in range(-width,width): #percorrer o campo todo mas nao sei como
+			if not intersect(r,i,0,game,width,height): #r é a peça rodada
+				simholes,simheight = simulate(r,i,0,game,width,height)
+				if best_position is None or best_holes>simholes or best_holes==simholes and best_height>simheight:
+					best_height=simheight
+					best_holes=simholes
+					best_position=i
+					best_rotation=num_rotacoes
 
+		num_rotacoes+=1
+	return best_position,best_rotation
