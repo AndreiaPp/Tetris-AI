@@ -70,7 +70,7 @@ def run_ai(game,piece,x,y):
 		#min_y=min(min(rotacoes[piece_name][rotation], key=lambda x: x[1]))
 		#print(min_y)
 		#for i in range(30-min_y):
-		#ret.append("s")
+		ret.append("s")
 		#print(ret)
 		return ret
 	else:
@@ -101,7 +101,7 @@ def intersect(piece,i,j,game,width,height):
 	if piece:
 		for x,y in piece:
 			#print(game)
-			if(x+i<1 or x+i>=width or y+j>=height-1 or [x+i,y+j] in game):
+			if(x+i<1 or x+i>=width or y+j>=height or [x+i,y+j] in game):
 				res=True
 	return res
 
@@ -149,7 +149,7 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 		# 			#print("filled final:",list(set(filled)-set(f)))
 		# 	#time.sleep(5)
 		for y in range(1,width,1):
-			for x in range(0,height):
+			for x in range(1,height):
 				if (y,x) in filled:
 					print(y,x)
 					if x<newheight:
