@@ -1,5 +1,6 @@
 import pygame
 import shape
+import time
 class Event():
 	type=None
 	key=None
@@ -9,29 +10,21 @@ class Event():
 		
 # original_pieces2={
 # 	"S":[[1,1],[1,2],[2,2],[2,3]],
-# 	"Z":[[2,1],[1,2],[2,2],[1,3]],
+#  	"Z":[[2,1],[1,2],[2,2],[1,3]],
 # 	"I":[[1,1],[2,1],[3,1],[4,1]],
-# 	"O":[[1,1],[2,1],[1,2],[2,2]],
+# 	"O":[[1,2],[2,2],[1,3],[2,3]], #fixed
 # 	"J":[[1,1],[2,1],[1,2],[1,3]],
-# 	"L":[[1,1],[1,2],[1,3],[2,3]],
+# 	"L":[[2,1],[2,2],[2,3],[3,3]], #fixed
 # 	"T":[[1,1],[1,2],[2,2],[1,3]]
-# 	}	
+#	}	
 original_pieces={
-	#"S":[[4,2],[4,3],[5,3],[5,4]],
-	"S":[[4,3],[4,4],[5,4],[5,5]],
-	#"Z":[[4,2],[3,3],[4,3],[3,4]],
-	 "Z":[[4,3],[3,4],[4,4],[3,5]],
-	#"I":[[2,2],[3,2],[4,2],[5,2]],
-	 "I":[[2,3],[3,3],[4,3],[5,3]],
-	
-	"O":[[3,3],[4,3],[3,4],[4,4]],
-	# "O":[[3,4],[4,4],[3,5],[4,5]],
-	#"J":[[4,2],[5,2],[4,3],[4,4]],
-	 "J":[[4,3],[5,3],[4,4],[4,5]],
-	#"L":[[4,2],[4,3],[4,4],[5,4]],
-	 "L":[[4,3],[4,4],[4,5],[5,5]],
-	#"T":[[4,2],[4,3],[5,3],[4,4]]
-	"T":[[4,3],[4,4],[5,4],[4,5]]
+	"S":[[4,2],[4,3],[5,3],[5,4]], #ta
+	"Z":[[4,2],[3,3],[4,3],[3,4]], #ta
+	"I":[[2,2],[3,2],[4,2],[5,2]], #ta
+	"O":[[3,3],[4,3],[3,4],[4,4]], #ta
+ 	"J":[[4,2],[5,2],[4,3],[4,4]], #ta
+ 	"L":[[4,2],[4,3],[4,4],[5,4]], #ta
+ 	"T":[[4,2],[4,3],[5,3],[4,4]] #ta
 }
 rotacoes = {
     "S": [[[4,2],[4,3],[5,3],[5,4]], [[4,3],[5,3],[3,4],[4,4]]],
@@ -46,12 +39,12 @@ counter=0
 
 piece_name=""
 def run_ai(game,piece,x,y):
-	if piece:
+	#if piece:
 		global counter
 		global piece_name
 		counter +=1
-		if counter<3:
-			return []
+		# if counter<3:
+		# 	return []
 		counter = 0
 		print(piece)
 		for p in original_pieces:
@@ -70,13 +63,13 @@ def run_ai(game,piece,x,y):
 			position+=1
 		while position>0:
 			ret.append(Event(pygame.KEYDOWN, pygame.K_RIGHT)) 
-			position-=1
-		min_y=min(min(rotacoes[piece_name][rotation], key=lambda x: x[1]))
-		print(min_y)
-		for i in range(30-min_y):
-			ret.append(Event(pygame.KEYDOWN, pygame.K_SPACE))
+		# 	position-=1
+		# min_y=min(min(rotacoes[piece_name][rotation], key=lambda x: x[1]))
+		# print(min_y)
+		# for i in range(30-min_y):
+		# 	ret.append(Event(pygame.KEYDOWN, pygame.K_SPACE))
 		return ret
-	return []
+	#return []
 	
 def identify_piece(piece):
 		min_x=100
@@ -101,6 +94,7 @@ def intersect(piece,i,j,game,width,height):
 	res=False
 	if piece:
 		for x,y in piece:
+			print(game)
 			if(x+i<1 or x+i>=width-1 or y+j>=height-1 or [x+i,y+j] in game):
 				res=True
 	return res

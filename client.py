@@ -2,6 +2,7 @@ import asyncio
 import getpass
 import json
 import os
+import time
 
 import websockets
 
@@ -16,9 +17,10 @@ pygame.display.set_icon(program_icon)
 
 async def agent_loop(server_address="localhost:8000", agent_name="student"):
     async with websockets.connect(f"ws://{server_address}/player") as websocket:
-
+        print("hello")
         # Receive information about static game properties
         await websocket.send(json.dumps({"cmd": "join", "name": agent_name}))
+        print("hello2")
 
         # Next 3 lines are not needed for AI agent
         
@@ -27,17 +29,22 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
         actions=[]
         while True:
             try:
+                print("printing the state")
                 state = json.loads(
-                    
                     await websocket.recv()
                 )  # receive game update, this must be called timely or your game will get out of sync with the server
                 c+=1
+                print("state",state)
                 if(c==1):
                     x,y=state.get('dimensions')
+                    continue
                 # Next lines are only for the Human Agent, the key values are nonetheless the correct ones!
                 key = ""
+                piece = state.get('piece')
+                print(piece)
+                    
                 if(actions==[]):
-                    actions=agent.run_ai(state.get('game'),state.get('piece'),x,y)
+                    actions=agent.run_ai(state.get('game'),piece,x,y)
                     print (actions)
                 else:
                     event=actions.pop(0)
