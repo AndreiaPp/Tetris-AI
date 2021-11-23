@@ -101,7 +101,7 @@ def intersect(piece,i,j,game,width,height):
 	if piece:
 		for x,y in piece:
 			#print(game)
-			if(x+i<1 or x+i>=width or y+j>=height or [x+i,y+j] in game):
+			if(x+i<1 or x+i>=width-1 or y+j>=height or [x+i,y+j] in game):
 				res=True
 	return res
 
@@ -112,17 +112,36 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 		newheight=height
 		holes=0
 		filled=[]
-		f=[]
 		print("i",i)
 		np=[]
+		
+		max_b=0 #NOVA HEURISTICA TRIALS
 		for a,b in game: #a=col b=linha
+			
 			filled.append((a,b))
-			f.append((a,b))
+			
 		for (x,y) in piece: #x=col y=linha
 			np.append([x+i,y+j])
+			if y+j>max_b: #NOVA HEURISTICA TRIALS
+				max_b=y+j #NOVA HEURISTICA TRIALS
 			filled.append((x+i,y+j))
-			f.append((x+i,y+j))
 		print("new piece_ ",np)
+		for y in range(1,width,1):
+			for x in range(1,height):
+				if (y,x) in filled:
+					
+					print(y,x)
+					if x<newheight:
+						newheight=x
+					for k in range(x,height):
+						if (y,k) not in filled:
+							holes+=1
+					break
+		
+		print("---",holes,"--",height-newheight,"---",max_b,"---")
+		return holes,height-newheight,max_b #NOVA HEURISTICA TRIALS
+
+
 		# for x in range(height-1,-1,-1): #linhas
 		# 	for y in range(1,width,1): #colunas
 		# 		occupied=False
@@ -148,39 +167,28 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 		# 					filled.append((y,k))
 		# 			#print("filled final:",list(set(filled)-set(f)))
 		# 	#time.sleep(5)
-		for y in range(1,width,1):
-			for x in range(1,height):
-				if (y,x) in filled:
-					print(y,x)
-					if x<newheight:
-						newheight=x
-					for k in range(x,height):
-						if (y,k) not in filled:
-							holes+=1
-					break
-		print("---"+str(holes)+"--"+str(height-newheight))
-		return holes,height-newheight
-
-
 
 def best(game,piece_name,width,height):
 	best_height=height
 	best_holes=width*height
 	best_position=None
 	best_rotation=None
-	
+	best_piece_height=0 #NOVA HEURISTICA TRIALS
 	num_rotacoes = 0
 	for r in rotacoes[piece_name]:
 		print("rotacao"+str(r))
 		for i in range(-width,width,1): #percorrer o campo todo mas nao sei como
 		#for i in range(width):
 			if not intersect(r,i,0,game,width,height):#intersect(r,game): #r é a peça rodada
-				simholes,simheight = simulate(r,i,0,game,width,height)
-				if best_position is None or best_holes>simholes or (best_holes==simholes and best_height>simheight):
+				simholes,simheight,simpieceheight = simulate(r,i,0,game,width,height) #NOVA HEURISTICA TRIALS
+				if best_position==None or best_holes>simholes or (best_holes==simholes and best_height>simheight) or (best_holes==simholes and best_height==simheight and best_piece_height<simpieceheight):
+					#NOVA HEURISTICA TRIALS
 					best_height=simheight
 					best_holes=simholes
+					best_piece_height=simpieceheight  #NOVA HEURISTICA TRIALS
 					best_position=i
 					best_rotation=num_rotacoes
+				
 		print(best_position,best_rotation)			
 		num_rotacoes+=1
 	print(num_rotacoes)
