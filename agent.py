@@ -53,11 +53,11 @@ def run_ai(game,piece,x,y):
 			piece_name=p
 			print("Sou o "+ piece_name)
 	if piece_name!="":
-		print("piece received:"+str(piece))
+		#print("piece received:"+str(piece))
 		position,rotation =best(game,piece_name,x,y) 
 		#TO DO:mudar medidas para deixar de estarem hardcoded
-		print("res:::")
-		print(position,rotation)
+		#print("res:::")
+		#print(position,rotation)
 		ret=[] #retornar logo os comandos todos
 		for i in range(rotation):
 			ret.append("w")
@@ -70,29 +70,29 @@ def run_ai(game,piece,x,y):
 		#min_y=min(min(rotacoes[piece_name][rotation], key=lambda x: x[1]))
 		#print(min_y)
 		#for i in range(30-min_y):
-		ret.append("s")
+		#ret.append("s")
 		#print(ret)
 		return ret
 	else:
-		return ["s"]
+		return [""]
 	#return []
 	
-def identify_piece(piece):
-		min_x=100
-		min_y=100
-		for t in piece:
-			x,y=t[0],t[1]
-			if(x<min_x):
-				min_x=x
-			if(y<min_y):
-				min_y=y
-		temp_piece=[]
-		print(min_x,min_y)
-		for t in piece:
-			temp_piece.append([(t[0]-min_x)+1,(t[1]-min_y)+1])
-		for p in original_pieces:
-			if(temp_piece==original_pieces[p]):
-				return p
+# def identify_piece(piece):
+# 		min_x=100
+# 		min_y=100
+# 		for t in piece:
+# 			x,y=t[0],t[1]
+# 			if(x<min_x):
+# 				min_x=x
+# 			if(y<min_y):
+# 				min_y=y
+# 		temp_piece=[]
+# 		print(min_x,min_y)
+# 		for t in piece:
+# 			temp_piece.append([(t[0]-min_x)+1,(t[1]-min_y)+1])
+# 		for p in original_pieces:
+# 			if(temp_piece==original_pieces[p]):
+# 				return p
 			
 def intersect(piece,i,j,game,width,height):
 	#i=-1 0 1
@@ -104,12 +104,6 @@ def intersect(piece,i,j,game,width,height):
 			if(x+i<1 or x+i>=width-1 or y+j>=height-1 or [x+i,y+j] in game):
 				res=True
 	return res
-
-# def intersect(piece,game):
-# 	for block in piece:
-# 		if block in game:
-# 			return True
-# 	return False
 
 def simulate(piece,i,j,game,width,height):
 		while not intersect(piece,i,j,game,width,height):
@@ -139,15 +133,6 @@ def simulate(piece,i,j,game,width,height):
 		#print("---"+str(holes)+"--"+str(height-newheight))
 		return holes,height-newheight
 
-# def best(game,piece,width,height):
-# 	best_height=height
-# 	best_holes=width*height
-# 	best_position=None
-# 	best_rot=None
-	
-# 	for rot in range(4): #rodamos 4 vezes
-# 		#como rodar??
-# 		pass
 
 
 def best(game,piece_name,width,height):
