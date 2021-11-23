@@ -41,14 +41,13 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                 # Next lines are only for the Human Agent, the key values are nonetheless the correct ones!
                 key = ""
                 piece = state.get('piece')
-                print(str(len(actions))+str(piece))
+                #print(str(len(actions))+str(piece))
                 if(piece!=None):
                     if(actions==[] ):
                         actions=agent.run_ai(state.get('game'),piece,x,y)
                     else:
                         
-                        event=actions.pop(0)
-                        key=event
+                        key=actions.pop(0)
                         # if event.type == pygame.QUIT:
                         #     pygame.quit()
                         

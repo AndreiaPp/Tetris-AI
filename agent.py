@@ -130,7 +130,7 @@ def simulate(piece,i,j,game,width,height):
 						if(k,y) not in filled:
 							holes+=1
 							filled.append((k,y))
-		#print("---"+str(holes)+"--"+str(height-newheight))
+		print("---"+str(holes)+"--"+str(height-newheight))
 		return holes,height-newheight
 
 
