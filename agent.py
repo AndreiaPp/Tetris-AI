@@ -112,7 +112,12 @@ def simulate(piece,i,j,game,width,height):
 		newheight=height
 		holes=0
 		filled=[]
-		
+		print("i",i)
+		for a,b in game:
+			filled.append((a,b))
+		for (x,y) in piece:
+			filled.append((x+j,y+i))
+		print("filled",filled)
 		for x in range(height-1,-1,-1):
 			for y in range(1,width,1):
 				occupied=False
@@ -120,16 +125,21 @@ def simulate(piece,i,j,game,width,height):
 					occupied=True
 				#funçao estranha
 				for a,b in piece:
+					print("novas pos",(a+j),(b+i))
 					if a+j==x and b+i==y:
 						occupied=True
 				if occupied and x<newheight:
 					newheight=x
 				if occupied:
 					filled.append((x,y))
+					print("filled pos peça:",filled)
 					for k in range(x,height):
+					#for k in range(0,x):
 						if(k,y) not in filled:
 							holes+=1
 							filled.append((k,y))
+					print("filled final:",filled)
+			time.sleep(100)
 		print("---"+str(holes)+"--"+str(height-newheight))
 		return holes,height-newheight
 
@@ -144,7 +154,7 @@ def best(game,piece_name,width,height):
 	num_rotacoes = 0
 	for r in rotacoes[piece_name]:
 		print("rotacao"+str(r))
-		for i in range(-width,width): #percorrer o campo todo mas nao sei como
+		for i in range(-width+2,width,1): #percorrer o campo todo mas nao sei como
 		#for i in range(width):
 			if not intersect(r,i,0,game,width,height):#intersect(r,game): #r é a peça rodada
 				simholes,simheight = simulate(r,i,0,game,width,height)
