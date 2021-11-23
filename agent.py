@@ -115,6 +115,7 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 		print("i",i)
 		np=[]
 		
+		higher=0 #NOVA HEURISTICA TRIALS
 		max_b=0 #NOVA HEURISTICA TRIALS
 		for a,b in game: #a=col b=linha
 			
@@ -124,21 +125,25 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 			np.append([x+i,y+j])
 			if y+j>max_b: #NOVA HEURISTICA TRIALS
 				max_b=y+j #NOVA HEURISTICA TRIALS
+				lower=max_b #NOVA HEURISTICA TRIALS
 			filled.append((x+i,y+j))
 		print("new piece_ ",np)
 		for y in range(1,width,1):
 			for x in range(1,height):
 				if (y,x) in filled:
-					
-					print(y,x)
+					if x<lower:
+						lower=x
+					if x>higher:
+						higher=x
+					#print(y,x)
 					if x<newheight:
 						newheight=x
 					for k in range(x,height):
 						if (y,k) not in filled:
 							holes+=1
 					break
-		
-		print("---",holes,"--",height-newheight,"---",max_b,"---")
+		dif=higher-lower
+		print("---",holes,"--",height-newheight,"---",max_b,"---",dif)
 		return holes,height-newheight,max_b #NOVA HEURISTICA TRIALS
 
 
@@ -175,6 +180,7 @@ def best(game,piece_name,width,height):
 	best_rotation=None
 	best_piece_height=0 #NOVA HEURISTICA TRIALS
 	num_rotacoes = 0
+	
 	for r in rotacoes[piece_name]:
 		print("rotacao"+str(r))
 		for i in range(-width,width,1): #percorrer o campo todo mas nao sei como
