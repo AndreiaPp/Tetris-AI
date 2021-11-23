@@ -54,7 +54,7 @@ def run_ai(game,piece,x,y):
 			print("Sou o "+ piece_name)
 	if piece_name!="":
 		print("piece received:"+str(piece))
-		position,rotation =best(game,piece_name,10,30) 
+		position,rotation =best(game,piece_name,x,y) 
 		#TO DO:mudar medidas para deixar de estarem hardcoded
 		print("res:::")
 		print(position,rotation)
@@ -120,7 +120,7 @@ def simulate(piece,i,j,game,width,height):
 		filled=[]
 		
 		for x in range(height-1,-1,-1):
-			for y in range(width):
+			for y in range(1,width,1):
 				occupied=False
 				if([x,y] in game):
 					occupied=True
