@@ -40,35 +40,35 @@ counter=0
 piece_name=""
 def run_ai(game,piece,x,y):
 	#if piece:
-		global counter
-		global piece_name
-		counter +=1
-		# if counter<3:
-		# 	return []
-		counter = 0
-		print(piece)
-		for p in original_pieces:
-			if(original_pieces[p]==piece):
-				piece_name=p
-				print("Sou o "+ piece_name)
-		position,rotation =best(game,piece_name,10,30) 
-		#TO DO:mudar medidas para deixar de estarem hardcoded
-		print("res:::")
-		print(position,rotation)
-		ret=[] #retornar logo os comandos todos
-		for i in range(rotation):
-			ret.append(Event(pygame.KEYDOWN, pygame.K_UP))
-		while position<0: #nao sei como traduzir o game_figure.x
-			ret.append(Event(pygame.KEYDOWN, pygame.K_RIGHT)) 
-			position+=1
-		while position>0:
-			ret.append(Event(pygame.KEYDOWN, pygame.K_RIGHT)) 
-		# 	position-=1
-		# min_y=min(min(rotacoes[piece_name][rotation], key=lambda x: x[1]))
-		# print(min_y)
-		# for i in range(30-min_y):
-		# 	ret.append(Event(pygame.KEYDOWN, pygame.K_SPACE))
-		return ret
+	#global counter
+	global piece_name
+	#counter +=1
+	# if counter<3:
+	# 	return []
+	#counter = 0
+	print(piece)
+	for p in original_pieces:
+		if(original_pieces[p]==piece):
+			piece_name=p
+			print("Sou o "+ piece_name)
+	position,rotation =best(game,piece_name,10,30) 
+	#TO DO:mudar medidas para deixar de estarem hardcoded
+	print("res:::")
+	print(position,rotation)
+	ret=[] #retornar logo os comandos todos
+	for i in range(rotation):
+		ret.append(Event(pygame.KEYDOWN, pygame.K_UP))
+	while position<0: #nao sei como traduzir o game_figure.x
+		ret.append(Event(pygame.KEYDOWN, pygame.K_RIGHT)) 
+		position+=1
+	while position>0:
+		ret.append(Event(pygame.KEYDOWN, pygame.K_RIGHT)) 
+	# 	position-=1
+	# min_y=min(min(rotacoes[piece_name][rotation], key=lambda x: x[1]))
+	# print(min_y)
+	# for i in range(30-min_y):
+	# 	ret.append(Event(pygame.KEYDOWN, pygame.K_SPACE))
+	return ret
 	#return []
 	
 def identify_piece(piece):
@@ -94,10 +94,16 @@ def intersect(piece,i,j,game,width,height):
 	res=False
 	if piece:
 		for x,y in piece:
-			print(game)
+			#print(game)
 			if(x+i<1 or x+i>=width-1 or y+j>=height-1 or [x+i,y+j] in game):
 				res=True
 	return res
+
+# def intersect(piece,game):
+# 	for block in piece:
+# 		if block in game:
+# 			return True
+# 	return False
 
 def simulate(piece,i,j,game,width,height):
 		while not intersect(piece,i,j,game,width,height):
@@ -147,9 +153,9 @@ def best(game,piece_name,width,height):
 	num_rotacoes = 0
 	for r in rotacoes[piece_name]:
 		print("rotacao"+str(r))
-		for i in range(-width,width): #percorrer o campo todo mas nao sei como
-			
-			if not intersect(r,i,0,game,width,height): #r é a peça rodada
+		#for i in range(-width,width): #percorrer o campo todo mas nao sei como
+		for i in range(width):
+			if not intersect(r,game):#intersect(r,i,0,game,width,height): #r é a peça rodada
 				simholes,simheight = simulate(r,i,0,game,width,height)
 				if best_position is None or best_holes>simholes or (best_holes==simholes and best_height>simheight):
 					best_height=simheight
@@ -161,3 +167,16 @@ def best(game,piece_name,width,height):
 	print(num_rotacoes)
 	print(best_rotation)
 	return best_position,best_rotation
+
+# def best(game,piece_name,width,height):
+# 	best_holes=width*height
+# 	best_position = None
+# 	best_rotation = None
+
+# 	num_rotacoes = 0
+
+# 	for r in rotacoes[piece_name]:
+# 		#percorrer da esquerda pra direita
+# 		#se intercetar todos, subimos uma altura
+
+# 		if not intersect(r,game):
