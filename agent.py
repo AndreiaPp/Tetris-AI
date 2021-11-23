@@ -123,31 +123,41 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 			filled.append((x+i,y+j))
 			f.append((x+i,y+j))
 		print("new piece_ ",np)
-		for x in range(height-1,-1,-1): #linhas
-			for y in range(1,width,1): #colunas
-				occupied=False
-				if([y,x] in game):
-					occupied=True
-				#funçao estranha
+		# for x in range(height-1,-1,-1): #linhas
+		# 	for y in range(1,width,1): #colunas
+		# 		occupied=False
+		# 		if([y,x] in game):
+		# 			occupied=True
+		# 		#funçao estranha
 				
-				for a,b in piece:
+		# 		for a,b in piece:
 					
-					if a+i==y and b+j==x:
-						occupied=True
+		# 			if a+i==y and b+j==x:
+		# 				occupied=True
 				
-				if occupied and x<newheight:
-					newheight=x
-				if occupied:
-					if (y,x) not in filled:
-						filled.append((y,x))
-					#print("filled pos peça:",filled)
-					for k in range(x,height): #linhas
-					#for k in range(0,x):
-						if(y,k) not in filled:
+		# 		if occupied and x<newheight:
+		# 			newheight=x
+		# 		if occupied:
+		# 			if (y,x) not in filled:
+		# 				filled.append((y,x))
+		# 			#print("filled pos peça:",filled)
+		# 			for k in range(x,height): #linhas
+		# 			#for k in range(0,x):
+		# 				if(y,k) not in filled:
+		# 					holes+=1
+		# 					filled.append((y,k))
+		# 			#print("filled final:",list(set(filled)-set(f)))
+		# 	#time.sleep(5)
+		for y in range(1,width,1):
+			for x in range(0,height):
+				if (y,x) in filled:
+					print(y,x)
+					if x<newheight:
+						newheight=x
+					for k in range(x,height):
+						if (y,k) not in filled:
 							holes+=1
-							filled.append((y,k))
-					#print("filled final:",list(set(filled)-set(f)))
-			#time.sleep(5)
+					break
 		print("---"+str(holes)+"--"+str(height-newheight))
 		return holes,height-newheight
 
