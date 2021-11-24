@@ -51,7 +51,7 @@ def run_ai(game,piece,x,y):
 	for p in original_pieces:
 		if(original_pieces[p]==piece):
 			piece_name=p
-			print("Sou o "+ piece_name)
+			#print("Sou o "+ piece_name)
 	if piece_name!="":
 		#print("piece received:"+str(piece))
 		position,rotation =best(game,piece_name,x,y) 
@@ -109,28 +109,24 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 		while not intersect(piece,i,j,game,width,height):
 			j+=1
 		j-=1
-		newheight=height
-		holes=0
+
 		filled=[]
-		print("i",i)
-		np=[]
 		
-		higher=0 #NOVA HEURISTICA TRIALS
-		max_b=0 #NOVA HEURISTICA TRIALS
 		for a,b in game: #a=col b=linha
 			filled.append((a,b))
 		for (x,y) in piece: #x=col y=linha
 			filled.append([x+i,y+j])
-		print(filled)
 		ag_height = aggregate_height(filled,height) #MINIMIZE
 		comp_lines = check_complete_lines(filled,height) #MAXIMIZE
 		num_holes = count_holes(filled,width,height) #MINIMIZE
 		bumpiness = calc_bumpiness(filled,width,height) #MINIMIZE
 
-		num1=-0.510066
-		num2=0.760666
-		num3=-0.35663
-		num4=-0.184483
+		num1=-0.510066 #original
+		#num1=-0.310066
+		num2=0.760666 #original
+		num3=-0.35663 #original
+		num4=-0.184483 #original
+		#num4=-0.284483
 
 		#Acording to paper
 			
@@ -172,21 +168,18 @@ def best(game,piece_name,width,height):
 	best_rotation=0
 	
 	for r in rotacoes[piece_name]:
-		print("rotacao"+str(r))
 		for i in range(-width,width,1): #percorrer o campo todo mas nao sei como
 			if not intersect(r,i,0,game,width,height):#intersect(r,game): #r é a peça rodada
 				heuristic = simulate(r,i,0,game,width,height) #NOVA HEURISTICA TRIALS
-				print("heuristica",heuristic)
 				if heuristic > best_heuristic:
 					best_heuristic=heuristic
 					best_position=i
 					best_rotation=num_rotacoes			
 		num_rotacoes+=1
-	print(num_rotacoes)
-	print(best_rotation)
 	return best_position,best_rotation
-
+counter=0
 def aggregate_height(filled,height):
+	global counter
 	piece_by_column = {}
 	for c,l in filled:
 		if c not in piece_by_column:
@@ -229,38 +222,12 @@ def calc_bumpiness(filled,width,height):
 	for c,l in filled:
 		piece_by_column[c].append(height-l)
 	
-	print("colunas,",piece_by_column)
 	for elem in piece_by_column:
 		piece_by_column[elem]=max(piece_by_column[elem])
 
 	bump = 0
-	print("pecas por coluna",piece_by_column)
-	# for hei in (1,len(piece_by_column)-1):
-	# 	#bump+=abs(piece_by_column[hei+1]-piece_by_column[hei])
-	# 	bump+=abs(piece_by_column[hei]-piece_by_column[hei+1])
-	# 	print("hei",hei)
-	# return bump
 	
-	for hei in (1,len(piece_by_column)-1):
+	for hei in range(1,len(piece_by_column)-1):
 		bump+=abs(piece_by_column[hei]-piece_by_column[hei+1])
 	return bump
 
-
-		
-
-
-
-
-# def best(game,piece_name,width,height):
-# 	best_holes=width*height
-# 	best_position = None
-# 	best_rotation = None
-
-# 	num_rotacoes = 0
-
-# 	for r in rotacoes[piece_name]:
-# 		#percorrer da esquerda pra direita
-# 		#se intercetar todos, subimos uma altura
-
-# 		if not intersect(r,game):
-#
