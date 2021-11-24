@@ -29,7 +29,6 @@ Player = namedtuple("Player", ["name", "ws"])
 HIGHSCORE_FILE = "highscores.json"
 MAX_HIGHSCORES = 10
 
-
 class GameServer:
     """Network Game Server."""
 
