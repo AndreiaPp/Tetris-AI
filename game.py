@@ -39,9 +39,8 @@ class Game:
         return {
             "dimensions": self.dimensions,
             "grid": self.grid,
-            "piece": self.current_piece.positions if self.current_piece else None,
-            "next_pieces": [n.positions for n in self.next_pieces],
             "game_speed": self.game_speed,
+            "score": self.score
         }
 
     def clear_rows(self):
@@ -119,6 +118,7 @@ class Game:
 
         self._lastkeypress = None
 
+        logger.debug("Current piece: %s", self.current_piece)
         return {
             "game": self.game,
             "piece": self.current_piece.positions if self.current_piece else None,
