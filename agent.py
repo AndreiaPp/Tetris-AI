@@ -84,11 +84,9 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 		bumpiness = calc_bumpiness(filled,width,height) #MINIMIZE
 
 		num1=-0.510066 #original
-		#num1=-0.310066
 		num2=0.760666 #original
 		num3=-0.35663 #original
 		num4=-0.184483 #original
-		#num4=-0.284483
 
 		#Acording to paper
 			
