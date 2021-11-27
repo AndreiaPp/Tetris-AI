@@ -1,12 +1,12 @@
 
 original_pieces={
-	"S":[[4,2],[4,3],[5,3],[5,4]], #ta
-	"Z":[[4,2],[3,3],[4,3],[3,4]], #ta
-	"I":[[2,2],[3,2],[4,2],[5,2]], #ta
-	"O":[[3,3],[4,3],[3,4],[4,4]], #ta
- 	"J":[[4,2],[5,2],[4,3],[4,4]], #ta
- 	"L":[[4,2],[4,3],[4,4],[5,4]], #ta
- 	"T":[[4,2],[4,3],[5,3],[4,4]] #ta
+	"S":[[4,2],[4,3],[5,3],[5,4]], 
+	"Z":[[4,2],[3,3],[4,3],[3,4]], 
+	"I":[[2,2],[3,2],[4,2],[5,2]], 
+	"O":[[3,3],[4,3],[3,4],[4,4]], 
+ 	"J":[[4,2],[5,2],[4,3],[4,4]], 
+ 	"L":[[4,2],[4,3],[4,4],[5,4]], 
+ 	"T":[[4,2],[4,3],[5,3],[4,4]] 
 }
 rotacoes = {
     "S": [[[4,2],[4,3],[5,3],[5,4]], [[4,3],[5,3],[3,4],[4,4]]],
@@ -25,8 +25,8 @@ def run_ai(game,piece,x,y):
 			piece_name=p	
 	if piece_name!="":
 		position,rotation =best(game,piece_name,x,y) 
-		#TO DO:mudar medidas para deixar de estarem hardcoded
-		ret=[] #retornar logo os comandos todos
+		#TO DO:change rotations to not hardcoded
+		ret=[] #return all actions
 		for i in range(rotation):
 			ret.append("w")
 		while position<0: 
@@ -73,9 +73,9 @@ def best(game,piece_name,width,height):
 	best_position = None
 	best_rotation=0
 	for r in rotacoes[piece_name]:
-		for i in range(-width,width,1): #percorrer o campo todo 
-			if not intersect(r,i,0,game,width,height):#intersect(r,game): #r é a peça rodada
-				heuristic = simulate(r,i,0,game,width,height) #NOVA HEURISTICA TRIALS
+		for i in range(-width,width,1): #iterate over the field
+			if not intersect(r,i,0,game,width,height): #r is the rotated piece
+				heuristic = simulate(r,i,0,game,width,height) 
 				if heuristic > best_heuristic:
 					best_heuristic=heuristic
 					best_position=i
