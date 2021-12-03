@@ -7,4 +7,4 @@ do
   sleep 1 
   ((i++))
 done
-python3 media.py
+#python3 media.py
