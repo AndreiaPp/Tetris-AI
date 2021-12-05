@@ -56,7 +56,9 @@ def simulate(piece,i,j,game,width,height): #i=col j=linha
 			filled.append([x+i,y+j])
 		ag_height = aggregate_height(filled,height) #MINIMIZE
 		comp_lines = check_complete_lines(filled,height) #MAXIMIZE
-		num_holes = count_holes(filled,width,height) #MINIMIZE
+		#ag_height,num_holes = height_holes(filled,width,height)
+		#num_holes = count_holes(filled,width,height) #MINIMIZE
+		num_holes = count_holes(filled,width,height,i,j) #MINIMIZE
 		bumpiness = calc_bumpiness(filled,width,height) #MINIMIZE
 
 		#num1=-0.510066 #original
@@ -107,15 +109,40 @@ def check_complete_lines(filled,height):
 			pieces_by_line[height-l]+=1
 	return sum(value == 8 for value in pieces_by_line.values())
 
-def count_holes(filled,width,height):
+# def count_holes(filled,width,height):
+# 	holes=0
+# 	for y in range(1,width):
+# 		for x in range(1,height):
+# 			if (y,x) in filled:
+# 				for k in range(x,height):
+# 					if (y,k) not in filled:
+# 						holes+=1
+# 				break
+# 	return holes
+
+def count_holes(filled,width,height,i,j):
 	holes=0
-	for y in range(1,width):
-		for x in range(1,height):
-			for k in range(x,0,-1):
-				if (y,k) not in filled:
-					holes+=1
-			break
+	if (i,j) in filled:
+		for k in range(j,height):
+			if (i,k) not in filled:
+				holes+=1
 	return holes
+
+
+# def height_holes(filled,width,height): 
+# 	sum=0
+# 	holes=0
+# 	for y in range(1,width):
+# 		for x in range(1,height):
+# 			if (y,x) in filled:
+# 				sum+=(height-x)
+# 				for k in range(x,height):
+# 					if (y,k) not in filled:
+# 						holes+=1
+# 				break
+# 	print(holes)
+# 	return sum,holes
+
 
 def calc_bumpiness(filled,width,height):
 	piece_by_column = {}
