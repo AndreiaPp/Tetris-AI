@@ -146,9 +146,11 @@ class GameServer:
                             [client.send(state) for client in self.viewers]
                         )
                 self.save_highscores(self.game.score)
-                f=open("./scores.txt",'a')
-                f.write(str(self.game.score))
-                f.close()
+                file = open('scores.txt','a')
+                file.write(str(self.game.score))
+                file.write("\n")
+                file.close()
+                
                 game_info = self.game.info()
                 game_info["player"] = self.current_player.name
 

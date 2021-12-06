@@ -19,15 +19,7 @@ normalized_pieces={
 	"Z":[[1, 0], [0, 1], [1, 1], [0, 2]]
 
 }
-# rotacoes = {
-#     "S": [[[4,2],[4,3],[5,3],[5,4]], [[4,3],[5,3],[3,4],[4,4]]],
-#     "Z": [[[4,2],[3,3],[4,3],[3,4]], [[3,3],[4,3],[4,4],[5,4]]],
-#     "I": [[[2,2],[3,2],[4,2],[5,2]], [[4,1],[4,2],[4,3],[4,4]]],
-#     "O": [[[3,3],[4,3],[3,4],[4,4]]],
-#     "J": [[[4,2],[5,2],[4,3],[4,4]], [[3,3],[4,3],[5,3],[5,4]], [[4,2],[4,3],[3,4],[4,4]], [[3,2],[3,3],[4,3],[5,3]]],
-# 	"L": [[[4,2],[4,3],[4,4],[5,4]], [[3,3],[4,3],[5,3],[3,4]], [[3,2],[4,2],[4,3],[4,4]], [[5,2],[3,3],[4,3],[5,3]]],
-#     "T": [[[4,2],[4,3],[5,3],[4,4]], [[3,3],[4,3],[5,3],[4,4]], [[4,2],[3,3],[4,3],[4,4]], [[4,2],[3,3],[4,3],[5,3]]]
-# }
+
 rotacoes = {
     "S": 2,
     "Z": 2,
@@ -108,7 +100,7 @@ def simulate(piece_pos,i,j,game,width,height): #i=col j=linha
 			filled.append((x+i,y+j))
 			
 		
-		comp_lines = check_complete_lines(filled,height) #MAXIMIZE
+		comp_lines = check_complete_lines(filled,height,width) #MAXIMIZE
 		#start=time.time()
 		# ag_height = aggregate_height(filled,height) #MINIMIZE
 		# num_holes = count_holes(filled,width,height) #MINIMIZE
@@ -117,6 +109,10 @@ def simulate(piece_pos,i,j,game,width,height): #i=col j=linha
 		# print("old ag,holes,bump:",ag_height," ",num_holes," ",bumpiness)
 		# start=time.time()
 		ag_height,num_holes,bumpiness= height_holes(filled,width,height) #MINIMIZE BOTH
+		# print(ag_height)
+		# ag_height = calculate_height(filled,width,height)
+		# print(ag_height)
+		# print("_________")
 		# print("new: ",time.time()-start)
 		#print("new ag,holes,bump:",ag_height," ",num_holes," ",bumpiness)
 		#print(num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness)
@@ -135,9 +131,9 @@ def best(game,piece_name,piece,width,height):
 	best_heuristic = -900
 	best_position = None
 	best_rotation=0
-	print(piece_name)
+	#print(piece_name)
 	for r in range(rotacoes[piece_name]):
-		print(piece.positions)
+		#print(piece.positions)
 		for i in range(-width,width,1): #iterate over the field
 			if not intersect(piece.positions,i,0,game,width,height): #r is the rotated piece
 				heuristic = simulate(piece.positions,i,0,game,width,height) 
@@ -162,6 +158,22 @@ counter=0
 # 		sum+=max(piece_by_column[elem])
 # 	return sum
 
+# def calculate_height(filled,width,height):
+# 	piece_by_column = {i:[] for i in range(1,width-1)}
+# 	for (x,y) in filled:
+# 		piece_by_column[x].append((x,y))
+# 	sum=0
+# 	for i in piece_by_column:
+# 		minimo=30
+# 		for x,y in piece_by_column[i]:
+# 			if y<minimo:
+# 				minimo=y
+# 		sum+=height-minimo
+# 	return sum
+
+
+
+
 def height_holes(filled,width,height):
 	sum=0
 	holes=0
@@ -178,18 +190,25 @@ def height_holes(filled,width,height):
 						holes+=1
 				break
 	#print(abs(piece_by_column[hei]-piece_by_column[hei+1]) for hei in range(1,len(piece_by_column)-1))
+	#for hei in range(1,len(piece_by_column)-1):
+					
 	for hei in range(1,len(piece_by_column)-1):
+		# print(hei)
 		bumpiness+=abs(piece_by_column[hei]-piece_by_column[hei+1])
+		# print(bumpiness)
+	# print("________________")
+	# print("final bumpiness",bumpiness)
 	return sum,holes,bumpiness
 
-def check_complete_lines(filled,height):
+def check_complete_lines(filled,height,width):
 	pieces_by_line={}
 	for c,l in filled:
 		if height-l not in pieces_by_line:
 			pieces_by_line[height-l]=1
 		else:
 			pieces_by_line[height-l]+=1
-	return sum(value == 8 for value in pieces_by_line.values())
+	#return sum(value == 8 for value in pieces_by_line.values())
+	return sum(value == width-2 for value in pieces_by_line.values())
 
 # def count_holes(filled,width,height):
 # 	holes=0
