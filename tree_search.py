@@ -15,19 +15,19 @@ num4=-0.184483 #original
 
 
 class SearchNode():
-    def __init__(self,parent,column,line,rotation,positions,depth,heuristic):
+    def __init__(self,parent,column,rotation,depth,heuristic):
         #the init gamefiled doesnt include the piece
         self.parent = parent
         self.column = column
-        self.line = line
+        #self.line = line this is not needed(?)
         self.rotation = rotation
-        self.positions = positions
+        #self.positions = positions not needed(?)
         #self.gamefield = gamefield + self.positions #with piece
         self.depth = depth
         self.heuristic = heuristic
     
     def __str__(self):
-        return str("Node:\nParent: "+str(self.parent)+"\nColumn: "+str(self.column)+"\nLine: "+str(self.line)+"\nRotation: "+str(self.rotation)+"\nPositions: "+str(self.positions)+"\nGamefield: "+str(self.gamefield)+"\nDepth: "+str(self.depth)+"\nHeuristic: "+str(self.heuristic)+"\n")
+        return str("Node:\nParent: "+str(self.parent)+"\nColumn: "+str(self.column)+"\nRotation: "+str(self.rotation)+"\nDepth: "+str(self.depth)+"\nHeuristic: "+str(self.heuristic)+"\n")
 
 class SearchTree():
     def __init__(self,maxDepth,dimensions,message,piece):
@@ -35,9 +35,9 @@ class SearchTree():
         self.message = message
         self.maxDepth = maxDepth
         self.piece = piece
-        root = SearchNode(None,0,0,0,self.piece.positions,0,-90000)
+        root = SearchNode(None,0,0,0,0)
         self.open_nodes=[root]
-        self.best_heuristic = 0
+        self.best_heuristic = -900000
         self.best_nodes=[]
     
     def __str__(self):
@@ -108,22 +108,31 @@ class SearchTree():
         return sum,holes,bumpiness
 
     def search(self):
+        print("BEGINNNNNNN")
         while self.open_nodes!=[]:
             node = self.open_nodes.pop(0)
             newnodes = []
+            if node.depth>=self.maxDepth:
+                break
             #criar nos para uma rotacao, para todas as posicoes, para a outra rotacao para todas as posicoes...
             for r in range(rotacoes[self.piece.name]):
                 for i in range(-self.dimensions[0],self.dimensions[0],1): #iterate over the field
                     if not self.intersect(i,0):
-                        #heuristic = simulate(piece.positions,i,0,game,width,height) 
-
-# heuristic = simulate(piece.positions,i,0,game,width,height) 
-# 				if heuristic > best_heuristic:
-# 					best_heuristic=heuristic
-# 					best_position=i
-# 					best_rotation=r
-# 		piece.rotate()			
-# 	return best_position,best_rotation
+                        heuristic = self.simulate_heuristic(i,0)
+                        n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic)
+                        if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
+                            newnodes.append(n)
+                            if n.heuristic>self.best_heuristic:
+                                self.best_heuristic=n.heuristic
+                                print("Here")
+                                self.best_nodes = self.get_path(n)
+                                self.best_nodes = [self.best_nodes[i] for i in range(len(self.best_nodes)-1,-1,-1)]
+                                print(self.get_path(n))
+                self.piece.rotate()
+            #greedy
+            self.open_nodes.extend(newnodes)
+            self.open_nodes.sort(key = lambda x : x.heuristic)
+        print("ENDDDDD")
                 
 
         
