@@ -29,11 +29,13 @@ rotacoes = {
     "T": 4
 }
 num1=-0.510066 #original
-#num1=-0.610066 
+#num1=-0.410066 
 num2=0.760666 #original
 #num2=1
 num3=-0.35663 #original
+#num3=-0.45663 
 num4=-0.184483 #original
+#num4=-0.384483 
 def run_ai(game,piece,x,y):
 	piece_name=""
 	# for p in original_pieces:
@@ -127,7 +129,7 @@ def simulate(piece_pos,i,j,game,width,height): #i=col j=linha
 		return num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness
 		
 def best(game,piece_name,piece,width,height):
-	best_heuristic = -900
+	best_heuristic = -90000
 	best_position = None
 	best_rotation=0
 	#print(piece_name)

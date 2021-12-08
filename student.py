@@ -25,6 +25,7 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                     await websocket.recv()
                 )  # receive game update, this must be called timely or your game will get out of sync with the server
                 c+=1
+                print("STATE",state)
                 if(c==1): #process first message sent by the server
                     x,y=state.get('dimensions')
                     continue
