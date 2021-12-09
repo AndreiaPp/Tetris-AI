@@ -42,6 +42,7 @@ class SearchTree():
         self.piece = piece
         root = SearchNode(None,0,0,0,0,0,0,0,0)
         self.open_nodes=[root]
+        #self.best_heuristic = -900000
         self.best_heuristic = -900000
         self.best_nodes=[]
         self.pieces=[piece]+next_p
@@ -52,7 +53,7 @@ class SearchTree():
     def get_path(self,node): #Devolve os nós que fazem a melhor heuristica
         if node.parent == None:
             #return [node]
-            return [node] #nao preciso que retorne a raiz no path(?)
+            return [] #nao preciso que retorne a raiz no path(?)
         print(node.depth)
         path = self.get_path(node.parent)
         path += [node]
@@ -145,16 +146,16 @@ class SearchTree():
                 for i in range(-self.dimensions[0],self.dimensions[0],1): #iterate over the field
                     if not self.intersect(i,0):
                         heuristic,a,b,c,d = self.simulate_heuristic(i,0)
+                        print("HEURISTIC",heuristic)
                         n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d)
                         #if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
                         if (n.depth<=self.maxDepth):
                             newnodes.append(n)
-                            
                             if n.heuristic>self.best_heuristic:
                                 self.best_heuristic=n.heuristic
                                 #print("Here")
                                 self.best_nodes = self.get_path(n)
-                                #self.best_nodes = [self.best_nodes[i] for i in range(len(self.best_nodes)-1,-1,-1)]
+                                self.best_nodes = [self.best_nodes[i] for i in range(len(self.best_nodes)-1,-1,-1)]
                                 #print(self.get_path(n))
                             if n.heuristic<-900000:
                                 print("heuristica:",n.heuristic)

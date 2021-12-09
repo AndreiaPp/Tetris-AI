@@ -86,7 +86,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		#print(next_p)
 		t=SearchTree(lookahead+1,(x,y),state,piece,next_p)
 		t.search() #efetua a pesquisa
-		no=t.best_nodes[-1]
+		no=t.best_nodes[0]
 		pos = no.column
 		rot = no.rotation
 		#print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
