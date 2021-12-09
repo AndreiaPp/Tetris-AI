@@ -9,11 +9,11 @@ rotacoes = {
 }
 
 num1=-0.510066 #original
-#num2=0.760666 #original
-num2=0.95
+num2=0.760666 #original
+#num2=0.95
 num3=-0.35663 #original
 num4=-0.184483 #original
-num5=-0.2
+num5=0
 #num4=-0.3
 
 class SearchNode():
@@ -88,7 +88,7 @@ class SearchTree():
         ag_height,num_holes,bumpiness,sqr_dif= self.height_holes(filled)
 	
         #Acording to paper
-        return num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness+num5*sqr_dif,ag_height,num_holes,bumpiness,comp_lines
+        return (num1*ag_height) + (num2*comp_lines) + (num3*num_holes) + (num4*bumpiness) +(num5*sqr_dif),ag_height,num_holes,bumpiness,comp_lines
 
     def check_complete_lines(self,filled):
         width=self.dimensions[0]
@@ -136,7 +136,7 @@ class SearchTree():
             bumpiness+=abs(piece_by_column[hei]-piece_by_column[hei+1])
             #print(abs(piece_by_column[hei]-piece_by_column[hei+1]))
         #print(bumpiness)
-        return sumheight,holes,bumpiness,(maxus-minus)**2
+        return sumheight,holes,bumpiness,(minus-maxus)**2
 
     def search(self):
         #print("BEGINNNNNNN")
@@ -155,8 +155,8 @@ class SearchTree():
                         #print("HEURISTIC",heuristic)
                         n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d)
                         print(n.depth,n.column,n.rotation,n.heuristic, "pai:",n.parent.depth,n.parent.column,n.parent.rotation)
-                        #if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
-                        if (n.depth<=self.maxDepth):
+                        if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
+                        #if (n.depth<=self.maxDepth):
                             newnodes.append(n)
                             if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
                                 self.best_heuristic=n.heuristic
