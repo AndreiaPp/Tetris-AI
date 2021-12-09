@@ -77,3 +77,11 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 	else:
 		return [""]
 
+def normalize_piece(piece):
+	temp=[]
+	w=min(a for a,b in piece)
+	h=min(b for a,b in piece)
+	for a,b in piece:
+		temp.append([a-w,b-h])
+	return temp
+
