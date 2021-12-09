@@ -47,7 +47,8 @@ class SearchTree():
         self.best_heuristic = -900000
         self.best_nodes=[]
         self.best_node=None
-        self.pieces=[piece]+next_p
+        #self.pieces=[piece]+next_p
+        self.pieces=[piece,piece,next_p]
     
     def __str__(self):
         return str("Tree:\nDimensions: "+str(self.dimensions)+"\nMessage: "+str(self.message)+"\nMaxDepth: "+str(self.maxDepth)+"\nPiece: "+str(self.piece)+"\nROOT: "+str(self.open_nodes[0])+"\n")
