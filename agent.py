@@ -21,7 +21,6 @@ rotacoes = {
 	"L": 4,
     "T": 4
 }
-
 init_pieces={}
 v=list(normalized_pieces.values())
 k=list(normalized_pieces.keys())
@@ -37,7 +36,6 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		return []
 
 	if piece_name!="":
-		#print(piece)
 		for s in SHAPES:
 			if s.name==piece_name:
 				s.set_pos((x - s.dimensions.x) / 2, 1)
@@ -59,9 +57,9 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		rot = no.rotation
 		#for u in range(len(nos)):
 		#	print("final nos[",u,"]",nos[u].column,nos[u].rotation)
-		print("final:",pos,rot)
-		print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
-		print("...................................................................")
+		#print("final:",pos,rot)
+		#print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
+		#print("...................................................................")
 		ret=[] #return all actions
 		for i in range(rot):
 			ret.append("w")
@@ -71,7 +69,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		while pos>0:
 			ret.append("d") 
 			pos-=1
-		ret.append("s")
+		#ret.append("s")
 		print(ret)
 		return ret
 	else:
