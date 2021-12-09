@@ -108,11 +108,11 @@ class SearchTree():
         return sum,holes,bumpiness
 
     def search(self):
-        print("BEGINNNNNNN")
+        #print("BEGINNNNNNN")
         while self.open_nodes!=[]:
             node = self.open_nodes.pop(0)
             newnodes = []
-            if node.depth>=self.maxDepth:
+            if node.depth+1>self.maxDepth:
                 break
             #criar nos para uma rotacao, para todas as posicoes, para a outra rotacao para todas as posicoes...
             for r in range(rotacoes[self.piece.name]):
@@ -120,19 +120,20 @@ class SearchTree():
                     if not self.intersect(i,0):
                         heuristic = self.simulate_heuristic(i,0)
                         n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic)
-                        if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
+                        #if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
+                        if (n.depth<=self.maxDepth):
                             newnodes.append(n)
                             if n.heuristic>self.best_heuristic:
                                 self.best_heuristic=n.heuristic
-                                print("Here")
+                                #print("Here")
                                 self.best_nodes = self.get_path(n)
                                 self.best_nodes = [self.best_nodes[i] for i in range(len(self.best_nodes)-1,-1,-1)]
-                                print(self.get_path(n))
+                                #print(self.get_path(n))
                 self.piece.rotate()
             #greedy
             self.open_nodes.extend(newnodes)
             self.open_nodes.sort(key = lambda x : x.heuristic)
-        print("ENDDDDD")
+        #print("ENDDDDD")
                 
 
         
