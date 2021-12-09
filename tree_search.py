@@ -13,7 +13,7 @@ num2=0.760666 #original
 #num2=0.95
 num3=-0.35663 #original
 num4=-0.184483 #original
-num5=-0.4
+num5=0
 #num4=-0.3
 
 class SearchNode():
@@ -41,6 +41,7 @@ class SearchTree():
         self.piece = piece
         self.best_heuristic = -900000
         self.best_nodes=[]
+        self.best_depth1=[] #Isto guarda os nodes com os 3 melhores valores no depth 1
         self.best_node=None
         self.pieces=[piece]+next_p
         self.filled=[[False]*self.dimensions[0] for _ in range(self.dimensions[1]) ]
@@ -72,7 +73,7 @@ class SearchTree():
         comp_lines = self.check_complete_lines(filled)
         ag_height,num_holes,bumpiness,dif= self.height_holes(filled)
         #Acording to paper
-        return int(num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness + num5*dif),ag_height,num_holes,bumpiness,comp_lines
+        return num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness + num5*dif,ag_height,num_holes,bumpiness,comp_lines
 
     def check_complete_lines(self,filled):
         width=self.dimensions[0]
@@ -121,14 +122,42 @@ class SearchTree():
                             for (x,y) in self.piece.positions: #x=col y=linha
                                 node.filled[y+j][x+i]=False
                             if (n.depth<=self.maxDepth):
+                                if len(self.best_depth1)<3:
+                                    self.best_depth1.append(n)
+                                else:
+                                    heurs = [i.heuristic for i in self.best_depth1]
+                                    minimo = min(heurs)
+                                    if n.heuristic > minimo:
+                                        self.best_depth1.remove(self.best_depth1[heurs.index(minimo)])
+                                        print("REMOVED ",minimo)
+                                        print("ADDED ",n.heuristic)
+                                        self.best_depth1.append(n)
+                                        heurs = [i.heuristic for i in self.best_depth1] #SO PRA DEBUG
+                                        print("THIS IS BEST DEPTH ",heurs)
+                                        print(n.depth)
                                 newnodes.append(n)
                                 if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
+                                    if n.depth>1: #Novo nó so sera considerado se o seu parent estiver nos 3 melhores
+                                        if n.parent not in self.best_depth1:
+                                            continue
                                     #print(n.depth,n.column,n.rotation,n.heuristic, "pai:",n.parent.depth,n.parent.column,n.parent.rotation)
+                                    #if n.parent in self.best_depth1:
                                     self.best_heuristic=n.heuristic
+                                    print("THIS IS THE HEURISTIC",n.heuristic)
                                     self.best_node = n
+                                elif n.depth==self.maxDepth and n.heuristic>self.best_heuristic: #Isto é para tentar ter o minimo de acoes pra msm heuristica
+                                    if n.depth>1:
+                                        if n.parent not in self.best_depth1:
+                                            continue
+                                    desvio = abs(n.column)+abs(n.rotation)
+                                    if desvio < (abs(self.best_node.column)+abs(self.best_node.rotation)): #significa que tem menos acoes
+                                        self.best_heuristic=n.heuristic
+                                        print("THIS IS THE HEURISTIC",n.heuristic)
+                                        self.best_node = n
+
                     self.piece.rotate()
-            self.open_nodes.extend(newnodes)
-            self.open_nodes.sort(key = lambda x : x.heuristic)
+                self.open_nodes.extend(newnodes)
+                self.open_nodes.sort(key = lambda x : x.heuristic)
            
         #print("ENDDDDD")
                 

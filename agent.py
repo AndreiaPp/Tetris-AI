@@ -69,7 +69,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		while pos>0:
 			ret.append("d") 
 			pos-=1
-		#ret.append("s")
+		ret.append("s")
 		print(ret)
 		return ret
 	else:
