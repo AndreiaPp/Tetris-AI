@@ -4,18 +4,19 @@ rotacoes = {
     "I": 2,
     "O": 1,
     "J": 4,
-	"L": 4,
+    "L": 4,
     "T": 4
 }
 
 num1=-0.510066 #original
 num2=0.760666 #original
+#num2=0.95
 num3=-0.35663 #original
 num4=-0.184483 #original
 
 
 class SearchNode():
-    def __init__(self,parent,column,rotation,depth,heuristic):
+    def __init__(self,parent,column,rotation,depth,heuristic,ag_height,num_holes,bumpiness,comp_lines):
         #the init gamefiled doesnt include the piece
         self.parent = parent
         self.column = column
@@ -25,20 +26,25 @@ class SearchNode():
         #self.gamefield = gamefield + self.positions #with piece
         self.depth = depth
         self.heuristic = heuristic
+        self.ag_height=ag_height
+        self.num_holes=num_holes
+        self.bumpiness=bumpiness
+        self.comp_lines=comp_lines
     
     def __str__(self):
         return str("Node:\nParent: "+str(self.parent)+"\nColumn: "+str(self.column)+"\nRotation: "+str(self.rotation)+"\nDepth: "+str(self.depth)+"\nHeuristic: "+str(self.heuristic)+"\n")
 
 class SearchTree():
-    def __init__(self,maxDepth,dimensions,message,piece):
+    def __init__(self,maxDepth,dimensions,message,piece,next_p):
         self.dimensions = dimensions
         self.message = message
         self.maxDepth = maxDepth
         self.piece = piece
-        root = SearchNode(None,0,0,0,0)
+        root = SearchNode(None,0,0,0,0,0,0,0,0)
         self.open_nodes=[root]
         self.best_heuristic = -900000
         self.best_nodes=[]
+        self.pieces=[piece]+next_p
     
     def __str__(self):
         return str("Tree:\nDimensions: "+str(self.dimensions)+"\nMessage: "+str(self.message)+"\nMaxDepth: "+str(self.maxDepth)+"\nPiece: "+str(self.piece)+"\nROOT: "+str(self.open_nodes[0])+"\n")
@@ -47,6 +53,7 @@ class SearchTree():
         if node.parent == None:
             #return [node]
             return [node] #nao preciso que retorne a raiz no path(?)
+        print(node.depth)
         path = self.get_path(node.parent)
         path += [node]
         return(path)
@@ -64,48 +71,66 @@ class SearchTree():
         while not self.intersect(i,j):
             j+=1
         j-=1
-        filled=[(a,b) for a,b in self.message.get('game')]
+        filled=[[False]*self.dimensions[0] for _ in range(self.dimensions[1]) ]
+        
+        for (a,b) in self.message.get('game'):
+            filled[b][a]=True
+        #filled=[(a,b) for a,b in game]
+        
         for (x,y) in self.piece.positions: #x=col y=linha
-            filled.append((x+i,y+j))
-		
+        #    filled.append((x+i,y+j))
+            filled[y+j][x+i]=True
+        #print(filled)
         comp_lines = self.check_complete_lines(filled)
         ag_height,num_holes,bumpiness= self.height_holes(filled)
-
-		#Acording to paper
-        return num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness
+	
+        #Acording to paper
+        return num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness,ag_height,num_holes,bumpiness,comp_lines
 
     def check_complete_lines(self,filled):
         width=self.dimensions[0]
         height=self.dimensions[1]
-
-        pieces_by_line={}
-        for c,l in filled:
-            if height-l not in pieces_by_line:
-                pieces_by_line[height-l]=1
-            else:
-                pieces_by_line[height-l]+=1
-        return sum(value == width-2 for value in pieces_by_line.values())
+        
+        #pieces_by_line={}
+        #for i in filled:
+        #    print(sum(i))
+        #for c,l in filled:
+        #    if height-l not in pieces_by_line:
+        #        pieces_by_line[height-l]=1
+        #    else:
+        #        pieces_by_line[height-l]+=1
+        return sum(sum(i) == width-2 for i in filled)
 
     def height_holes(self,filled):
         width=self.dimensions[0]
         height=self.dimensions[1]
-        sum=0
+        sumheight=0
         holes=0
         bumpiness=0
-        piece_by_column = {}
+        piece_by_column = [0]*width
         for y in range(1,width-1):
-            piece_by_column[y]=0
+            #piece_by_column[y]=height
             for x in range(1,height):
-                if (y,x) in filled:
-                    sum+=(height-x)
+                #if (y,x) in filled:
+                if filled[x][y]:
+                    sumheight+=(height-x)
+                    #if height-x<piece_by_column[y]:
+                    #    piece_by_column[y]=height-x
                     piece_by_column[y]=height-x
                     for k in range(x,height):
-                        if (y,k) not in filled:
+                        #if (y,k) not in filled:
+                        if not filled[k][y]:
                             holes+=1
                     break        
+        #for i in piece_by_column:
+        #    if piece_by_column[i]==height:
+        #        piece_by_column[i]=0
+        #print(piece_by_column)
         for hei in range(1,len(piece_by_column)-1):
             bumpiness+=abs(piece_by_column[hei]-piece_by_column[hei+1])
-        return sum,holes,bumpiness
+            #print(abs(piece_by_column[hei]-piece_by_column[hei+1]))
+        #print(bumpiness)
+        return sumheight,holes,bumpiness
 
     def search(self):
         #print("BEGINNNNNNN")
@@ -114,21 +139,25 @@ class SearchTree():
             newnodes = []
             if node.depth+1>self.maxDepth:
                 break
+            self.piece=self.pieces[node.depth] #ir buscar peça certa
             #criar nos para uma rotacao, para todas as posicoes, para a outra rotacao para todas as posicoes...
             for r in range(rotacoes[self.piece.name]):
                 for i in range(-self.dimensions[0],self.dimensions[0],1): #iterate over the field
                     if not self.intersect(i,0):
-                        heuristic = self.simulate_heuristic(i,0)
-                        n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic)
+                        heuristic,a,b,c,d = self.simulate_heuristic(i,0)
+                        n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d)
                         #if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
                         if (n.depth<=self.maxDepth):
                             newnodes.append(n)
+                            
                             if n.heuristic>self.best_heuristic:
                                 self.best_heuristic=n.heuristic
                                 #print("Here")
                                 self.best_nodes = self.get_path(n)
-                                self.best_nodes = [self.best_nodes[i] for i in range(len(self.best_nodes)-1,-1,-1)]
+                                #self.best_nodes = [self.best_nodes[i] for i in range(len(self.best_nodes)-1,-1,-1)]
                                 #print(self.get_path(n))
+                            if n.heuristic<-900000:
+                                print("heuristica:",n.heuristic)
                 self.piece.rotate()
             #greedy
             self.open_nodes.extend(newnodes)
