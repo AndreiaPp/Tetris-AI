@@ -27,7 +27,6 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                     await websocket.recv()
                 )  # receive game update, this must be called timely or your game will get out of sync with the server
                 
-                #print("STATE",state)
                 if(c==0): #process first message sent by the server
                     x,y=state.get('dimensions')
                     c=1
@@ -38,8 +37,6 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                         if next_pieces != state.get('next_pieces'):
                             next_pieces=state.get('next_pieces')
                             actions=agent.run_ai(state.get('game'),piece,next_pieces,x,y,state,lookahead) #go fetch new actions
-                            #print("ACTIONS:")
-                            #print(actions)
                     else:
                         key=actions.pop(0)
                         await websocket.send(json.dumps({"cmd": "key", "key": key}))  # send key command to server 
