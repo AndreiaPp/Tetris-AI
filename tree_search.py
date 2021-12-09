@@ -8,16 +8,11 @@ rotacoes = {
     "T": 4
 }
 
-#num1=-0.510066 #original
-#num2=0.760666 #original
-##num2=0.95
-#num3=-0.35663 #original
-#num4=-0.184483 #original
-num1=-0.51 #original
-num2=0.76 #original
+num1=-0.510066 #original
+num2=0.760666 #original
 #num2=0.95
-num3=-0.35 #original
-num4=-0.18 #original
+num3=-0.35663 #original
+num4=-0.184483 #original
 num5=0
 #num4=-0.3
 
