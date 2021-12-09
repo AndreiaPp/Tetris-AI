@@ -91,10 +91,11 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		pos = no.column
 		rot = no.rotation
 		for u in range(len(nos)):
-			print("final nos[",u,"]",nos[u].column,nos[u].rotation)
-		print("final:",pos,rot)
+			pass
+			#aqui#print("final nos[",u,"]",nos[u].column,nos[u].rotation)
+		#aqui#print("final:",pos,rot)
 		
-		print("...................................................................")
+		#aqui#print("...................................................................")
 		#print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
 		#position,rotation =best(game,piece.name,piece,x,y) 
 		#TO DO:change rotations to not hardcoded
@@ -138,7 +139,7 @@ def simulate(piece_pos,i,j,game,width,height): #i=col j=linha
 		for (x,y) in piece_pos: #x=col y=linha
 		#	filled.append((x+i,y+j))
 			filled[x][y]=True	
-		print(filled)
+		#aqui#print(filled)
 		comp_lines = check_complete_lines(filled,height,width) #MAXIMIZE
 		ag_height,num_holes,bumpiness= height_holes(filled,width,height) #MINIMIZE BOTH
 

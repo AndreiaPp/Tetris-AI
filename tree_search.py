@@ -165,7 +165,7 @@ class SearchTree():
                             if (n.depth<=self.maxDepth):
                                 newnodes.append(n)
                                 if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
-                                    print(n.depth,n.column,n.rotation,n.heuristic, "pai:",n.parent.depth,n.parent.column,n.parent.rotation)
+                                    #aqui#print(n.depth,n.column,n.rotation,n.heuristic, "pai:",n.parent.depth,n.parent.column,n.parent.rotation)
                                     self.best_heuristic=n.heuristic
                                     #print("depth:",n.depth)
                                     self.best_node = n

@@ -20,7 +20,7 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
         c,x,y=0,0,0
         actions=[]
         next_pieces=[]
-        lookahead=1
+        lookahead=2
         while True:
             try:
                 state = json.loads(
