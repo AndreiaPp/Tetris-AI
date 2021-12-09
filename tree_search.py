@@ -8,16 +8,21 @@ rotacoes = {
     "T": 4
 }
 
-num1=-0.510066 #original
-num2=0.760666 #original
+#num1=-0.510066 #original
+#num2=0.760666 #original
+##num2=0.95
+#num3=-0.35663 #original
+#num4=-0.184483 #original
+num1=-0.51 #original
+num2=0.76 #original
 #num2=0.95
-num3=-0.35663 #original
-num4=-0.184483 #original
-num5=-0.10
+num3=-0.35 #original
+num4=-0.18 #original
+num5=0
 #num4=-0.3
 
 class SearchNode():
-    def __init__(self,parent,column,rotation,depth,heuristic,ag_height,num_holes,bumpiness,comp_lines):
+    def __init__(self,parent,column,rotation,depth,heuristic,ag_height,num_holes,bumpiness,comp_lines,filled):
         #the init gamefiled doesnt include the piece
         self.parent = parent
         self.column = column
@@ -31,6 +36,8 @@ class SearchNode():
         self.num_holes=num_holes
         self.bumpiness=bumpiness
         self.comp_lines=comp_lines
+        self.filled=filled
+        
     
     def __str__(self):
         return str("Node:\nParent: "+str(self.parent)+"\nColumn: "+str(self.column)+"\nRotation: "+str(self.rotation)+"\nDepth: "+str(self.depth)+"\nHeuristic: "+str(self.heuristic)+"\n")
@@ -41,13 +48,18 @@ class SearchTree():
         self.message = message
         self.maxDepth = maxDepth
         self.piece = piece
-        root = SearchNode(None,0,0,0,0,0,0,0,0)
-        self.open_nodes=[root]
+        
+        
         #self.best_heuristic = -900000
         self.best_heuristic = -900000
         self.best_nodes=[]
         self.best_node=None
         self.pieces=[piece]+next_p
+        self.filled=[[False]*self.dimensions[0] for _ in range(self.dimensions[1]) ]
+        for (a,b) in self.message.get('game'):
+            self.filled[b][a]=True
+        root = SearchNode(None,0,0,0,0,0,0,0,0,self.filled)
+        self.open_nodes=[root]
     
     def __str__(self):
         return str("Tree:\nDimensions: "+str(self.dimensions)+"\nMessage: "+str(self.message)+"\nMaxDepth: "+str(self.maxDepth)+"\nPiece: "+str(self.piece)+"\nROOT: "+str(self.open_nodes[0])+"\n")
@@ -70,25 +82,15 @@ class SearchTree():
                 res=True
         return res
 
-    def simulate_heuristic(self,i,j): #i=col j=linha
-        while not self.intersect(i,j):
-            j+=1
-        j-=1
-        filled=[[False]*self.dimensions[0] for _ in range(self.dimensions[1]) ]
+    def simulate_heuristic(self,i,j,filled): #i=col j=linha
         
-        for (a,b) in self.message.get('game'):
-            filled[b][a]=True
-        #filled=[(a,b) for a,b in game]
         
-        for (x,y) in self.piece.positions: #x=col y=linha
-        #    filled.append((x+i,y+j))
-            filled[y+j][x+i]=True
         #print(filled)
         comp_lines = self.check_complete_lines(filled)
-        ag_height,num_holes,bumpiness= self.height_holes(filled)
+        ag_height,num_holes,bumpiness,dif= self.height_holes(filled)
 	
         #Acording to paper
-        return num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness,ag_height,num_holes,bumpiness,comp_lines
+        return (num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness + num5*dif),ag_height,num_holes,bumpiness,comp_lines
 
     def check_complete_lines(self,filled):
         width=self.dimensions[0]
@@ -110,7 +112,7 @@ class SearchTree():
         sumheight=0
         holes=0
         bumpiness=0
-        piece_by_column = [0]*width
+        piece_by_column = [0]*(width-2)
         for y in range(1,width-1):
             #piece_by_column[y]=height
             for x in range(1,height):
@@ -119,7 +121,7 @@ class SearchTree():
                     sumheight+=(height-x)
                     #if height-x<piece_by_column[y]:
                     #    piece_by_column[y]=height-x
-                    piece_by_column[y]=height-x
+                    piece_by_column[y-1]=height-x
                     for k in range(x,height):
                         #if (y,k) not in filled:
                         if not filled[k][y]:
@@ -129,14 +131,14 @@ class SearchTree():
         #    if piece_by_column[i]==height:
         #        piece_by_column[i]=0
         #print(piece_by_column)
-        #minus=min(piece_by_column)
-        #maxus=max(piece_by_column)
-        #sqr_dif=(maxus-minus)**2
+        minus=min(piece_by_column)
+        maxus=max(piece_by_column)
+        #print(maxus,minus)
         for hei in range(1,len(piece_by_column)-1):
             bumpiness+=abs(piece_by_column[hei]-piece_by_column[hei+1])
             #print(abs(piece_by_column[hei]-piece_by_column[hei+1]))
         #print(bumpiness)
-        return sumheight,holes,bumpiness
+        return sumheight,holes,bumpiness,(maxus-minus)
 
     def search(self):
         #print("BEGINNNNNNN")
@@ -149,11 +151,21 @@ class SearchTree():
                 for r in range(rotacoes[self.piece.name]):
                     for i in range(-self.dimensions[0],self.dimensions[0],1): #iterate over the field
                         if not self.intersect(i,0):
-                            heuristic,a,b,c,d = self.simulate_heuristic(i,0)
+                            j=0
+                            while not self.intersect(i,j):
+                                j+=1
+                            j-=1
+                            for (x,y) in self.piece.positions: #x=col y=linha
+                                #    filled.append((x+i,y+j))
+                                node.filled[y+j][x+i]=True
+                            heuristic,a,b,c,d = self.simulate_heuristic(i,j,node.filled)
                             
                             #print("HEURISTIC",heuristic)
-                            n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d)
-                            
+                            #n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d)
+                            n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d,node.filled)
+                            for (x,y) in self.piece.positions: #x=col y=linha
+                                #    filled.append((x+i,y+j))
+                                node.filled[y+j][x+i]=False
                             #if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
                             if (n.depth<=self.maxDepth):
                                 newnodes.append(n)
