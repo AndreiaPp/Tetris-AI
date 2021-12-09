@@ -1,15 +1,15 @@
 import time
 from shape import SHAPES 
 from tree_search import SearchTree,SearchNode
-original_pieces={
-	"S":[[4,2],[4,3],[5,3],[5,4]], 
-	"Z":[[4,2],[3,3],[4,3],[3,4]], 
-	"I":[[2,2],[3,2],[4,2],[5,2]], 
-	"O":[[3,3],[4,3],[3,4],[4,4]], 
- 	"J":[[4,2],[5,2],[4,3],[4,4]], 
- 	"L":[[4,2],[4,3],[4,4],[5,4]], 
- 	"T":[[4,2],[4,3],[5,3],[4,4]] 
-}
+#original_pieces={
+#	"S":[[4,2],[4,3],[5,3],[5,4]], 
+#	"Z":[[4,2],[3,3],[4,3],[3,4]], 
+#	"I":[[2,2],[3,2],[4,2],[5,2]], 
+#	"O":[[3,3],[4,3],[3,4],[4,4]], 
+#	"J":[[4,2],[5,2],[4,3],[4,4]], 
+# 	"L":[[4,2],[4,3],[4,4],[5,4]], 
+# 	"T":[[4,2],[4,3],[5,3],[4,4]] 
+#}
 normalized_pieces={
 	"I":[[0, 0], [1, 0], [2, 0], [3, 0]],
 	"S":[[0, 0], [0, 1], [1, 1], [1, 2]],
@@ -38,41 +38,56 @@ num3=-0.35663 #original
 num4=-0.184483 #original
 #num4=-0.384483 
 init_pieces={}
-def run_ai(game,piece,x,y,state):
+v=list(normalized_pieces.values())
+k=list(normalized_pieces.keys())
+def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 	piece_name=""
 	# for p in original_pieces:
 	# 	if(original_pieces[p]==piece):
-	# 		piece_name=p	
-	for p in normalized_pieces:
-		if normalized_pieces[p]==normalize_piece(piece):
-			piece_name=p
-
+	# 		piece_name=p
+	pi=normalize_piece(piece)	
+	if pi in v:
+		piece_name=k[v.index(pi)] #identificar peça
+	
 	if piece_name not in init_pieces:
 		init_pieces[piece_name]=piece
-	if init_pieces[piece_name] != piece:
+	if init_pieces[piece_name] != piece: #a peça ja nao está na posiçao inicial
 		return []
+	
 	#ir ao shape
 	#print(piece_name)
 	
 	#buscar shape com este nome
 	#set shape com pos inicial
 	#piece=esta shape
+	
+	
 	if piece_name!="":
 		#print(piece)
 		for s in SHAPES:
 			if s.name==piece_name:
 				s.set_pos((x - s.dimensions.x) / 2, 1)
 				piece=s
-	
+		next_p=[]
+		for i in range(lookahead): #adicionar proximas peças a lista
+			pi=normalize_piece(next_pieces[i])	
+			if pi in v:
+				temp=k[v.index(pi)] #identificar peça
+				for s in SHAPES:
+					if s.name==temp:
+						s.set_pos((x - s.dimensions.x) / 2, 1)
+						next_p.append(s)
 		#print(piece.positions)
 		#piece.rotate()
 		#print(piece.positions)
 		#print("......")
-		t=SearchTree(1,(x,y),state,piece)
+		#print(next_p)
+		t=SearchTree(lookahead+1,(x,y),state,piece,next_p)
 		t.search() #efetua a pesquisa
-		no=t.best_nodes[0]
+		no=t.best_nodes[-1]
 		pos = no.column
 		rot = no.rotation
+		#print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
 		#position,rotation =best(game,piece.name,piece,x,y) 
 		#TO DO:change rotations to not hardcoded
 		ret=[] #return all actions
@@ -108,11 +123,14 @@ def simulate(piece_pos,i,j,game,width,height): #i=col j=linha
 		while not intersect(piece_pos,i,j,game,width,height):
 			j+=1
 		j-=1
-		filled=[(a,b) for a,b in game]
+		filled=[[False]*width]*height
+		for a,b in game:
+			filled[a][b]=True
+		#filled=[(a,b) for a,b in game]
 		for (x,y) in piece_pos: #x=col y=linha
-			filled.append((x+i,y+j))
-			
-		
+		#	filled.append((x+i,y+j))
+			filled[x][y]=True	
+		print(filled)
 		comp_lines = check_complete_lines(filled,height,width) #MAXIMIZE
 		ag_height,num_holes,bumpiness= height_holes(filled,width,height) #MINIMIZE BOTH
 

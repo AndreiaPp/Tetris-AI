@@ -6,11 +6,11 @@ import pygame
 
 import websockets
 
-import agent
+import agent2
 import pygame
 
 pygame.init()
-program_icon = pygame.image.load("./Desktop/IA/tpg-tetris-ia_97953_98599/data/icon2.png")
+program_icon = pygame.image.load("data/icon2.png")
 pygame.display.set_icon(program_icon)
 
 async def agent_loop(server_address="localhost:8000", agent_name="student"):
@@ -19,26 +19,20 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
         await websocket.send(json.dumps({"cmd": "join", "name": agent_name}))
         c,x,y=0,0,0
         actions=[]
-        next_pieces=[]
-        lookahead=1
         while True:
             try:
                 state = json.loads(
                     await websocket.recv()
                 )  # receive game update, this must be called timely or your game will get out of sync with the server
                 c+=1
-                #print("STATE",state)
                 if(c==1): #process first message sent by the server
                     x,y=state.get('dimensions')
                     continue
                 piece = state.get('piece')
+                piece2=state.get('next_pieces')
                 if(piece!=None):
                     if(actions==[]):
-                        if next_pieces != state.get('next_pieces'):
-                            next_pieces=state.get('next_pieces')
-                            actions=agent.run_ai(state.get('game'),piece,next_pieces,x,y,state,lookahead) #go fetch new actions
-                            #print("ACTIONS:")
-                            #print(actions)
+                        actions=agent2.run_ai(state.get('game'),piece,piece2[0],x,y) #go fetch new actions
                     else:
                         key=actions.pop(0)
                         await websocket.send(json.dumps({"cmd": "key", "key": key}))  # send key command to server 
