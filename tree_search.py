@@ -9,11 +9,12 @@ rotacoes = {
 }
 
 num1=-0.510066 #original
-num2=0.760666 #original
-#num2=0.95
+#num2=0.760666 #original
+num2=0.95
 num3=-0.35663 #original
 num4=-0.184483 #original
-
+num5=-0.2
+#num4=-0.3
 
 class SearchNode():
     def __init__(self,parent,column,rotation,depth,heuristic,ag_height,num_holes,bumpiness,comp_lines):
@@ -45,6 +46,7 @@ class SearchTree():
         #self.best_heuristic = -900000
         self.best_heuristic = -900000
         self.best_nodes=[]
+        self.best_node=None
         self.pieces=[piece]+next_p
     
     def __str__(self):
@@ -54,7 +56,7 @@ class SearchTree():
         if node.parent == None:
             #return [node]
             return [] #nao preciso que retorne a raiz no path(?)
-        print(node.depth)
+        #print(node.depth)
         path = self.get_path(node.parent)
         path += [node]
         return(path)
@@ -83,10 +85,10 @@ class SearchTree():
             filled[y+j][x+i]=True
         #print(filled)
         comp_lines = self.check_complete_lines(filled)
-        ag_height,num_holes,bumpiness= self.height_holes(filled)
+        ag_height,num_holes,bumpiness,sqr_dif= self.height_holes(filled)
 	
         #Acording to paper
-        return num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness,ag_height,num_holes,bumpiness,comp_lines
+        return num1*ag_height + num2*comp_lines + num3*num_holes + num4*bumpiness+num5*sqr_dif,ag_height,num_holes,bumpiness,comp_lines
 
     def check_complete_lines(self,filled):
         width=self.dimensions[0]
@@ -127,11 +129,14 @@ class SearchTree():
         #    if piece_by_column[i]==height:
         #        piece_by_column[i]=0
         #print(piece_by_column)
+        minus=min(piece_by_column)
+        maxus=max(piece_by_column)
+        
         for hei in range(1,len(piece_by_column)-1):
             bumpiness+=abs(piece_by_column[hei]-piece_by_column[hei+1])
             #print(abs(piece_by_column[hei]-piece_by_column[hei+1]))
         #print(bumpiness)
-        return sumheight,holes,bumpiness
+        return sumheight,holes,bumpiness,(maxus-minus)**2
 
     def search(self):
         #print("BEGINNNNNNN")
@@ -146,23 +151,26 @@ class SearchTree():
                 for i in range(-self.dimensions[0],self.dimensions[0],1): #iterate over the field
                     if not self.intersect(i,0):
                         heuristic,a,b,c,d = self.simulate_heuristic(i,0)
-                        print("HEURISTIC",heuristic)
+                        
+                        #print("HEURISTIC",heuristic)
                         n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d)
+                        print(n.depth,n.column,n.rotation,n.heuristic, "pai:",n.parent.depth,n.parent.column,n.parent.rotation)
                         #if (n not in self.get_path(node)) and (n.depth<=self.maxDepth):
                         if (n.depth<=self.maxDepth):
                             newnodes.append(n)
-                            if n.heuristic>self.best_heuristic:
+                            if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
                                 self.best_heuristic=n.heuristic
-                                #print("Here")
-                                self.best_nodes = self.get_path(n)
-                                self.best_nodes = [self.best_nodes[i] for i in range(len(self.best_nodes)-1,-1,-1)]
+                                print("depth:",n.depth)
+                                self.best_node = n
+                                #self.best_nodes = [self.best_nodes[i] for i in range(len(self.best_nodes)-1,-1,-1)]
                                 #print(self.get_path(n))
-                            if n.heuristic<-900000:
-                                print("heuristica:",n.heuristic)
+                           
                 self.piece.rotate()
+            
             #greedy
             self.open_nodes.extend(newnodes)
             self.open_nodes.sort(key = lambda x : x.heuristic)
+           
         #print("ENDDDDD")
                 
 

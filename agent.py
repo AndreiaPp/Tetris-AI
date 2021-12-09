@@ -86,9 +86,11 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		#print(next_p)
 		t=SearchTree(lookahead+1,(x,y),state,piece,next_p)
 		t.search() #efetua a pesquisa
-		no=t.best_nodes[0]
+		nos=t.get_path(t.best_node)
+		no=nos[-1]
 		pos = no.column
 		rot = no.rotation
+		print("...................................................................")
 		#print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
 		#position,rotation =best(game,piece.name,piece,x,y) 
 		#TO DO:change rotations to not hardcoded
