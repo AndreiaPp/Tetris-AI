@@ -52,6 +52,12 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		t=SearchTree(lookahead+1,(x,y),state,piece,next_p)
 		t.search() #efetua a pesquisa
 		nos=t.get_path(t.best_node)
+		print("HELLOOO")
+		print(t.best_node)
+		print("______")
+		for i in nos:
+			print(str(i))
+		#print(nos)
 		no=nos[0]
 		pos = no.column
 		rot = no.rotation
