@@ -98,8 +98,10 @@ class SearchTree():
                     break    
         minus=min(piece_by_column)
         maxus=max(piece_by_column)
-        for hei in range(1,len(piece_by_column)-1):
+        print("PIECEBYCOLUMN",piece_by_column)
+        for hei in range(len(piece_by_column)-1):
             bumpiness+=abs(piece_by_column[hei]-piece_by_column[hei+1])
+            print("BUMPING ",piece_by_column[hei],"-",piece_by_column[hei+1])
         return sumheight,holes,bumpiness,(maxus-minus)
 
     def search(self):
@@ -145,7 +147,7 @@ class SearchTree():
                                     self.best_heuristic=n.heuristic
                                     print("THIS IS THE HEURISTIC",n.heuristic)
                                     self.best_node = n
-                                elif n.depth==self.maxDepth and n.heuristic>self.best_heuristic: #Isto é para tentar ter o minimo de acoes pra msm heuristica
+                                elif n.depth==self.maxDepth and n.heuristic==self.best_heuristic: #Isto é para tentar ter o minimo de acoes pra msm heuristica
                                     if n.depth>1:
                                         if n.parent not in self.best_depth1:
                                             continue
@@ -158,6 +160,8 @@ class SearchTree():
                     self.piece.rotate()
                 self.open_nodes.extend(newnodes)
                 self.open_nodes.sort(key = lambda x : x.heuristic)
+                self.open_nodes.reverse()
+                #self.open_nodes = self.open_nodes[:3]
            
         #print("ENDDDDD")
                 

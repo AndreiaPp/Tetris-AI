@@ -1,6 +1,6 @@
 import time
 from shape import SHAPES 
-from tree_search import SearchTree,SearchNode
+from temp import SearchTree,SearchNode
 
 normalized_pieces={
 	"I":[[0, 0], [1, 0], [2, 0], [3, 0]],
@@ -36,6 +36,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		return []
 
 	if piece_name!="":
+		print(piece_name)
 		for s in SHAPES:
 			if s.name==piece_name:
 				s.set_pos((x - s.dimensions.x) / 2, 1)
@@ -52,20 +53,22 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		t=SearchTree(lookahead+1,(x,y),state,piece,next_p)
 		t.search() #efetua a pesquisa
 		nos=t.get_path(t.best_node)
-		print("HELLOOO")
-		print(t.best_node)
-		print("______")
-		for i in nos:
-			print(str(i))
+		#print("HELLOOO")
+		#print(t.best_node)
+		#print("______")
+		#for i in nos:
+	#		print(str(i))
 		#print(nos)
 		no=nos[0]
 		pos = no.column
 		rot = no.rotation
+		no=nos[1]
+		print(no.depth,no.column,no.rotation,no.heuristic, "pai:",no.parent.depth,no.parent.column,no.parent.rotation)
 		#for u in range(len(nos)):
 		#	print("final nos[",u,"]",nos[u].column,nos[u].rotation)
 		#print("final:",pos,rot)
 		#print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
-		#print("...................................................................")
+		print("...................................................................")
 		ret=[] #return all actions
 		for i in range(rot):
 			ret.append("w")
@@ -75,8 +78,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		while pos>0:
 			ret.append("d") 
 			pos-=1
-		ret.append("s")
-		print(ret)
+		#ret.append("s")
 		return ret
 	else:
 		return [""]
