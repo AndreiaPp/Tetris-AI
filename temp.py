@@ -1,3 +1,4 @@
+
 import time 
 import copy
 rotacoes = {
@@ -11,7 +12,7 @@ rotacoes = {
 }
 
 num1=-0.510066 #original
-num2=0.760666 #original
+num2=0.960666 #original
 #num2=0.95
 num3=-0.35663 #original
 num4=-0.184483 #original
@@ -24,7 +25,6 @@ class SearchNode():
         self.rotation = rotation
         self.depth = depth
         self.heuristic = heuristic
-        
         self.ag_height=ag_height
         self.num_holes=num_holes
         self.bumpiness=bumpiness
@@ -48,6 +48,7 @@ class SearchTree():
         self.best_node=None
         self.pieces=[piece]+next_p
         self.filled=[[False]*self.width for _ in range(self.height) ]
+
         for (a,b) in self.message.get('game'):
             self.filled[b][a]=True
         root = SearchNode(None,0,0,0,0,0,0,0,0,self.filled)
@@ -92,6 +93,7 @@ class SearchTree():
         lines=sum(lista)
         return num1*sumheight + num2*lines + num3*holes + num4*bumpiness,res ,sumheight,holes,bumpiness,lines
 
+
     def search(self):
         while self.open_nodes!=[]:
             node = self.open_nodes.pop(0)
@@ -107,13 +109,14 @@ class SearchTree():
                             j-=1
                             for (x,y) in self.piece.positions: #x=col y=linha
                                 node.filled[y+j][x+i]=True
+
                             heuristic,lines,a,b,c,d= self.simulate_heuristic(node.filled)
                             if lines!=[]:
                                 temp={}
                                 for l in lines:
                                     temp[l]=node.filled.pop(l)
                                     node.filled.insert(0,[False]*self.width)
-                            n = SearchNode(node,i,r,node.depth+1,node.heuristic+(heuristic)/2,a,b,c,d,copy.deepcopy(node.filled))
+                            n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d,copy.deepcopy(node.filled))
                             if lines!=[]:
                                 for l in temp:
                                     node.filled.pop(0)
@@ -122,30 +125,19 @@ class SearchTree():
                                 node.filled[y+j][x+i]=False
                             if n.depth!=self.maxDepth:
                                 newnodes.append(n)
-                            if n.depth==self.maxDepth:
-                                print(n.depth,n.column,n.rotation,n.heuristic, "pai:",n.parent.depth,n.parent.column,n.parent.rotation)
                             if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
-                                
-                                
                                 self.best_heuristic=n.heuristic
                                 #print("THIS IS THE HEURISTIC",n.heuristic)
                                 self.best_node = n
                                 
 
                     self.piece.rotate()
-                
-                
                 self.open_nodes.extend(newnodes)
-                for i in self.open_nodes:
-                	print(i.heuristic,i.column,i.rotation)
-                print("---apenas 2----")
                 #self.open_nodes.sort(key = lambda y : abs(y.column)+y.rotation)
                 self.open_nodes.sort(key= lambda x : x.heuristic,reverse=True)
                 
-                self.open_nodes=self.open_nodes[:2]
-                for i in self.open_nodes:
-                	print(i.heuristic,i.column,i.rotation)
-                print("------------")
+                #self.open_nodes=self.open_nodes[:2]
+                
         #print("ENDDDDD")
                 
 
