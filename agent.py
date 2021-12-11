@@ -62,7 +62,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		no=nos[0]
 		pos = no.column
 		rot = no.rotation
-		no=nos[1]
+		#no=nos[1]
 		print(no.depth,no.column,no.rotation,no.heuristic, "pai:",no.parent.depth,no.parent.column,no.parent.rotation)
 		#for u in range(len(nos)):
 		#	print("final nos[",u,"]",nos[u].column,nos[u].rotation)
@@ -78,7 +78,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		while pos>0:
 			ret.append("d") 
 			pos-=1
-		#ret.append("s")
+		ret.append("s")
 		return ret
 	else:
 		return [""]
