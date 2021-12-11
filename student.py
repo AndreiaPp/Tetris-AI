@@ -32,7 +32,9 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                     c=1
                     continue
                 piece = state.get('piece')
+                print("piece:",piece)
                 if(piece!=None):
+                    
                     if(actions==[]):
                         if next_pieces != state.get('next_pieces'):
                             next_pieces=state.get('next_pieces')

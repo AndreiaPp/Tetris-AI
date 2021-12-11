@@ -50,7 +50,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 					if s.name==temp:
 						s.set_pos((x - s.dimensions.x) / 2, 1)
 						next_p.append(s)
-		t=SearchTree(lookahead+1,(x,y),state,piece,next_p)
+		t=SearchTree(lookahead+1,(x,y),game,piece,next_p)
 		t.search() #efetua a pesquisa
 		nos=t.get_path(t.best_node)
 		#print("HELLOOO")
@@ -63,12 +63,12 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		pos = no.column
 		rot = no.rotation
 		#no=nos[1]
-		print(no.depth,no.column,no.rotation,no.heuristic, "pai:",no.parent.depth,no.parent.column,no.parent.rotation)
+		#print(no.depth,no.column,no.rotation,no.heuristic, "pai:",no.parent.depth,no.parent.column,no.parent.rotation)
 		#for u in range(len(nos)):
 		#	print("final nos[",u,"]",nos[u].column,nos[u].rotation)
 		#print("final:",pos,rot)
 		#print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
-		print("...................................................................")
+		#print("...................................................................")
 		ret=[] #return all actions
 		for i in range(rot):
 			ret.append("w")
@@ -81,6 +81,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		ret.append("s")
 		return ret
 	else:
+		print(piece)
 		return [""]
 
 def normalize_piece(piece):
