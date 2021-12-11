@@ -116,7 +116,7 @@ class SearchTree():
                                 for l in lines:
                                     temp[l]=node.filled.pop(l)
                                     node.filled.insert(0,[False]*self.width)
-                            n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d,copy.deepcopy(node.filled))
+                            n = SearchNode(node,i,r,node.depth+1,2*node.heuristic+heuristic,a,b,c,d,copy.deepcopy(node.filled))
                             if lines!=[]:
                                 for l in temp:
                                     node.filled.pop(0)
@@ -135,8 +135,7 @@ class SearchTree():
                 self.open_nodes.extend(newnodes)
                 #self.open_nodes.sort(key = lambda y : abs(y.column)+y.rotation)
                 self.open_nodes.sort(key= lambda x : x.heuristic,reverse=True)
-                
-                #self.open_nodes=self.open_nodes[:2]
+                self.open_nodes=self.open_nodes[:1]
                 
         #print("ENDDDDD")
                 
