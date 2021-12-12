@@ -19,26 +19,31 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
         await websocket.send(json.dumps({"cmd": "join", "name": agent_name}))
         c,x,y=0,0,0
         actions=[]
+        next_pieces=[]
+        lookahead=1
         while True:
             try:
                 state = json.loads(
                     await websocket.recv()
                 )  # receive game update, this must be called timely or your game will get out of sync with the server
-                c+=1
-                if(c==1): #process first message sent by the server
+                
+                if(c==0): #process first message sent by the server
                     x,y=state.get('dimensions')
+                    c=1
                     continue
                 piece = state.get('piece')
-                piece2=state.get('next_pieces')
                 if(piece!=None):
+                    
                     if(actions==[]):
-                        actions=agent2.run_ai(state.get('game'),piece,piece2[0],x,y) #go fetch new actions
+                        if next_pieces != state.get('next_pieces'):
+                            next_pieces=state.get('next_pieces')
+                            actions=agent2.run_ai(state.get('game'),piece,next_pieces,x,y,state,lookahead) #go fetch new actions
                     else:
                         key=actions.pop(0)
                         await websocket.send(json.dumps({"cmd": "key", "key": key}))  # send key command to server 
                                         
                 else:
-                    actions=[]
+                    actions+=[]
             except websockets.exceptions.ConnectionClosedOK:
                 print("Server has cleanly disconnected us")
                 return

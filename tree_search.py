@@ -61,9 +61,9 @@ class SearchTree():
         path += [node]
         return(path)
 
-    def intersect(self,i,j):
+    def intersect(self,node,i,j):
         for x,y in self.piece.positions:
-            if(x+i<1 or x+i>=self.width-1 or y+j>=self.height or self.filled[y+j-1][x+i-1]):
+            if(x+i<1 or x+i>=self.width-1 or y+j>=self.height or node.filled[y+j-1][x+i-1]):
                 return True
         return False
 
@@ -102,9 +102,9 @@ class SearchTree():
                 self.piece=self.pieces[node.depth] #ir buscar peça certa
                 for r in range(rotacoes[self.piece.name]):
                     for i in range(-4,6,1): #iterate over the field
-                        if not self.intersect(i,0):
+                        if not self.intersect(node,i,0):
                             j=0
-                            while not self.intersect(i,j):
+                            while not self.intersect(node,i,j):
                                 j+=1
                             j-=1
                             for (x,y) in self.piece.positions: #x=col y=linha
@@ -122,7 +122,7 @@ class SearchTree():
                                     
                             #heuristic,a,b,c,d= self.simulate_heuristic(node.filled,lines)
                             heuristic,a,b,c,d= self.simulate_heuristic(node.filled)
-                            n = SearchNode(node,i,r,node.depth+1,2*node.heuristic+heuristic,a,b,c,d,copy.deepcopy(node.filled))
+                            n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d,copy.deepcopy(node.filled))
                             if n.depth!=self.maxDepth:
                                 newnodes.append(n)
                             if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
@@ -138,9 +138,9 @@ class SearchTree():
                                 node.filled[y+j-1][x+i-1]=False
                     self.piece.rotate()
                 self.open_nodes.extend(newnodes)
-                self.open_nodes.sort(key = lambda y : abs(y.column)+y.rotation)
+                #self.open_nodes.sort(key = lambda y : abs(y.column)+y.rotation)
                 self.open_nodes.sort(key= lambda x : x.heuristic,reverse=True)
-                self.open_nodes=self.open_nodes[:5]
+                self.open_nodes=self.open_nodes[:6]
         #print("ENDDDDD")
                 
 
