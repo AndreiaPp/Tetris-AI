@@ -1,6 +1,6 @@
 import time
 from shape import SHAPES 
-from temp import SearchTree,SearchNode
+from tree_search import SearchTree,SearchNode
 
 normalized_pieces={
 	"I":[[0, 0], [1, 0], [2, 0], [3, 0]],
@@ -52,6 +52,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 						next_p.append(s)
 		t=SearchTree(lookahead+1,(x,y),game,piece,next_p)
 		t.search() #efetua a pesquisa
+		#no=t.find_best()
 		nos=t.get_path(t.best_node)
 		#print("HELLOOO")
 		#print(t.best_node)

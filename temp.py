@@ -30,6 +30,8 @@ class SearchNode():
         self.bumpiness=bumpiness
         self.comp_lines=comp_lines
         self.filled=filled
+        self.sumsons=0
+        self.nsons=0
         
     
     def __str__(self):
@@ -43,13 +45,14 @@ class SearchTree():
         self.piece = piece
         self.best_heuristic = -900000
         self.best_nodes=[]
+        self.all_opened_nodes=[]
         self.best_depth1=[] #Isto guarda os nodes com os 3 melhores valores no depth 1
         self.best_node=None
         self.pieces=[piece]+next_p
         self.filled=[[False]*self.width for _ in range(self.height) ]
         for (a,b) in game:
             self.filled[b][a]=True
-        root = SearchNode(None,0,0,0,0,0,0,0,0,self.filled)
+        root = SearchNode(None,0,0,0,1,0,0,0,0,self.filled)
         self.open_nodes=[root]
     
     def __str__(self):
@@ -71,7 +74,7 @@ class SearchTree():
     def simulate_heuristic(self,filled,lista): #i=col j=linha
         sumheight=0
         holes=0
-        bumpiness=0
+        
         piece_by_column = [0]*(self.width-2)
         for y in range(1,self.width-1):
             for x in range(1,self.height):
@@ -82,6 +85,7 @@ class SearchTree():
                         if not filled[k][y]:
                             holes+=1
                     break
+        bumpiness=piece_by_column[0]+piece_by_column[len(piece_by_column)-1]
         for hei in range(len(piece_by_column)-1):
             bumpiness+=abs(piece_by_column[hei]-piece_by_column[hei+1])
         lines=sum(lista)
@@ -92,6 +96,17 @@ class SearchTree():
         res = [i for i, val in enumerate(lista) if val]
         return res
         
+    def find_best(self):
+        best=-9000000
+        print(len(self.all_opened_nodes))
+        best_node=self.all_opened_nodes[0]
+        for i in self.all_opened_nodes:
+            print(i.heuristic, i.column,i.rotation,i.sumsons,i.nsons)
+            if (i.sumsons/i.nsons)+2*i.heuristic>best:
+                best=(i.sumsons/i.nsons)+2*i.heuristic
+                best_node=i
+        return best_node
+    		    
     def search(self):
 
         while self.open_nodes!=[]:
@@ -118,12 +133,14 @@ class SearchTree():
                                     node.filled.insert(0,[False]*self.width)
                                     
                             heuristic,a,b,c,d= self.simulate_heuristic(node.filled,lines)
-                            n = SearchNode(node,i,r,node.depth+1,2*node.heuristic+heuristic,a,b,c,d,copy.deepcopy(node.filled))
+                            node.sumsons+=heuristic
+                            node.nsons+=1
+                            n = SearchNode(node,i,r,node.depth+1,heuristic,a,b,c,d,copy.deepcopy(node.filled))
                             if n.depth!=self.maxDepth:
                                 newnodes.append(n)
-                            if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
-                                self.best_heuristic=n.heuristic
-                                self.best_node = n
+                            #if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
+                             #   self.best_heuristic=n.heuristic
+                             #   self.best_node = n
                                 
                             if lines!=[]:
                                 for l in temp:
@@ -133,9 +150,11 @@ class SearchTree():
                                 node.filled[y+j][x+i]=False
                     self.piece.rotate()
                 self.open_nodes.extend(newnodes)
-                self.open_nodes.sort(key = lambda y : abs(y.column)+y.rotation)
+                #self.open_nodes.sort(key = lambda y : abs(y.column)+y.rotation)
                 self.open_nodes.sort(key= lambda x : x.heuristic,reverse=True)
-                self.open_nodes=self.open_nodes[:5]
+                #self.open_nodes=self.open_nodes[:5]
+                self.all_opened_nodes+=self.open_nodes
+                self.all_opened_nodes=list(dict.fromkeys(self.all_opened_nodes))
         #print("ENDDDDD")
                 
 
