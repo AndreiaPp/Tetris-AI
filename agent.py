@@ -1,4 +1,3 @@
-import time
 from shape import SHAPES 
 from tree_search import SearchTree,SearchNode
 
