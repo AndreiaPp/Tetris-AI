@@ -35,15 +35,14 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                 if(piece!=None):
                     
                     if(actions==[]):
-                        if next_pieces != state.get('next_pieces'):
-                            next_pieces=state.get('next_pieces')
-                            actions=agent.run_ai(state.get('game'),piece,next_pieces,x,y,state,lookahead) #go fetch new actions
+                        next_pieces=state.get('next_pieces')
+                        actions=agent.run_ai(state.get('game'),piece,next_pieces,x,y,state,lookahead) #go fetch new actions
                     else:
                         key=actions.pop(0)
                         await websocket.send(json.dumps({"cmd": "key", "key": key}))  # send key command to server 
                                         
                 else:
-                    actions+=[]
+                    actions=[]
             except websockets.exceptions.ConnectionClosedOK:
                 print("Server has cleanly disconnected us")
                 return

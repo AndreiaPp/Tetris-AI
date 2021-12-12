@@ -140,7 +140,7 @@ class SearchTree():
                 self.open_nodes.extend(newnodes)
                 #self.open_nodes.sort(key = lambda y : abs(y.column)+y.rotation)
                 self.open_nodes.sort(key= lambda x : x.heuristic,reverse=True)
-                self.open_nodes=self.open_nodes[:6]
+                self.open_nodes=self.open_nodes[:5]
         #print("ENDDDDD")
                 
 
