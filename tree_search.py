@@ -18,16 +18,12 @@ num4=-0.184483 #original
 #num4=-0.3
 
 class SearchNode():
-    def __init__(self,parent,column,rotation,depth,heuristic,ag_height,num_holes,bumpiness,comp_lines,filled):
+    def __init__(self,parent,column,rotation,depth,heuristic,filled):
         self.parent = parent
         self.column = column
         self.rotation = rotation
         self.depth = depth
         self.heuristic = heuristic
-        self.ag_height=ag_height
-        self.num_holes=num_holes
-        self.bumpiness=bumpiness
-        self.comp_lines=comp_lines
         self.filled=filled
         
     
@@ -48,11 +44,11 @@ class SearchTree():
         self.filled=[[False]*(self.width-2) for _ in range(self.height-1) ]
         for (a,b) in game:
             self.filled[b-1][a-1]=True
-        root = SearchNode(None,0,0,0,0,0,0,0,0,self.filled)
+        root = SearchNode(None,0,0,0,0,self.filled)
         self.open_nodes=[root]
     
     def __str__(self):
-        return str("Tree:\nDimensions: "+str(self.height)+"-"+str(self.width)+"\nGame: "+str(game)+"\nMaxDepth: "+str(self.maxDepth)+"\nPiece: "+str(self.piece)+"\nROOT: "+str(self.open_nodes[0])+"\n")
+        return str("Tree:\nDimensions: "+str(self.height)+"-"+str(self.width)+"\nMaxDepth: "+str(self.maxDepth)+"\nPiece: "+str(self.piece)+"\nROOT: "+str(self.open_nodes[0])+"\n")
 
     def get_path(self,node): #Devolve os nós que fazem a melhor heuristica
         if node.parent == None:
@@ -86,7 +82,7 @@ class SearchTree():
             bumpiness+=abs(piece_by_column[hei]-piece_by_column[hei+1])
         #lines=sum(lista)
         lines=sum(sum(i) == 8 for i in filled)
-        return num1*sumheight + num2*lines + num3*holes + num4*bumpiness,sumheight,holes,bumpiness,lines
+        return num1*sumheight + num2*lines + num3*holes + num4*bumpiness
         
     def calc_lines(self,filled):
         lista=[sum(i) == self.width-2 for i in filled]
@@ -121,8 +117,8 @@ class SearchTree():
                                         node.filled.insert(0,[False]*self.width)
                                     
                             #heuristic,a,b,c,d= self.simulate_heuristic(node.filled,lines)
-                            heuristic,a,b,c,d= self.simulate_heuristic(node.filled)
-                            n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,a,b,c,d,copy.deepcopy(node.filled))
+                            heuristic= self.simulate_heuristic(node.filled)
+                            n = SearchNode(node,i,r,node.depth+1,node.heuristic+heuristic,copy.deepcopy(node.filled))
                             if n.depth!=self.maxDepth:
                                 newnodes.append(n)
                             if n.depth==self.maxDepth and n.heuristic>self.best_heuristic:
