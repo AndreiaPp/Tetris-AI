@@ -71,6 +71,7 @@ def run_ai(game,piece,next_pieces,x,y,state,lookahead):
 		#print("ag_height:",no.ag_height,"holes:",no.num_holes,"bump",no.bumpiness,"lines",no.comp_lines)
 		#print("...................................................................")
 		ret=[] #return all actions
+		print("FIELD",no.filled)
 		for i in range(rot):
 			ret.append("w")
 		while pos<0: 
