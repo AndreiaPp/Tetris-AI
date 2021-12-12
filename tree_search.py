@@ -89,7 +89,7 @@ class SearchTree():
                 self.piece.rotate() #rotate the piece 
             self.open_nodes.extend(newnodes)
             self.open_nodes.sort(key= lambda x : x.heuristic,reverse=True) #sort
-            self.open_nodes=self.open_nodes[:3] #we only open the 5 best nodes of each depth
+            self.open_nodes=self.open_nodes[:3] #we only open the 3 best nodes of each depth
     
     #check if piece colides with the field limits or other pieces
     def intersect(self,node,i,j):
