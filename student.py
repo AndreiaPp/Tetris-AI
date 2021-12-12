@@ -3,9 +3,7 @@ import getpass
 import json
 import os
 import pygame
-
 import websockets
-
 import agent
 import pygame
 
@@ -19,8 +17,7 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
         await websocket.send(json.dumps({"cmd": "join", "name": agent_name}))
         c,x,y=0,0,0
         actions=[]
-        next_pieces=[]
-        lookahead=1
+        lookahead=1 #change this to change the number of lookahead pieces
         while True:
             try:
                 state = json.loads(
@@ -33,14 +30,11 @@ async def agent_loop(server_address="localhost:8000", agent_name="student"):
                     continue
                 piece = state.get('piece')
                 if(piece!=None):
-                    
                     if(actions==[]):
-                        next_pieces=state.get('next_pieces')
-                        actions=agent.run_ai(state.get('game'),piece,next_pieces,x,y,state,lookahead) #go fetch new actions
+                        actions=agent.run_ai(state.get('game'),piece,state.get('next_pieces'),x,y,lookahead) #go fetch new actions
                     else:
                         key=actions.pop(0)
-                        await websocket.send(json.dumps({"cmd": "key", "key": key}))  # send key command to server 
-                                        
+                        await websocket.send(json.dumps({"cmd": "key", "key": key}))  # send key command to server               
                 else:
                     actions=[]
             except websockets.exceptions.ConnectionClosedOK:
