@@ -8,6 +8,10 @@ In Tetris, the player packs up pieces/tiles (tetrominoes) that fall vertically t
 The game’s score takes into account the number of packed pieces by the agent and the efficiency of the solutions found (privileging multiple lines in the shortest possible time).
 In this repository you will find a presentation summing how our agent works along with the heuristic used.
 
+## Authors
+[Andreia Portela](https://github.com/AndreiaPp)
+[Miguel Ferreira](https://github.com/MiguelF07)
+
 ## How to install
 
 Make sure you are running Python 3.7 or higher
