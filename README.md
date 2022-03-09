@@ -10,6 +10,7 @@ In this repository you will find a presentation summing how our agent works alon
 
 ## Authors
 [Andreia Portela](https://github.com/AndreiaPp)
+
 [Miguel Ferreira](https://github.com/MiguelF07)
 
 ## How to install
